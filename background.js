@@ -5,8 +5,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "ASK_GEMINI") {
     // 저장소에서 API 키를 먼저 가져온 뒤 호출
     chrome.storage.local.get(["GEMINI_API_KEY"], (result) => {
-      if (!result.GEMINI_API_KEY) {
-        alert("API 키를 먼저 설정해주세요!");
+     if (!result.GEMINI_API_KEY) {
+        // alert 대신 로그를 남기고 실행 중단
+        console.error("API 키가 없습니다.");
+        sendResponse({ target: null, error: "API_KEY_MISSING" });
         return;
       }
       callGemini(request.prompt, request.elements, result.GEMINI_API_KEY).then(sendResponse);

@@ -12,9 +12,9 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.htm" 
   },
-  "options_page": "options.html",
+  "options_page": "options.htm", 
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
