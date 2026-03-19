@@ -1,0 +1,3348 @@
+[
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 0,
+            "y": -30
+        },
+        "size": {
+            "height": 30,
+            "width": 140
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 0,
+            "y": -30
+        },
+        "size": {
+            "height": 30,
+            "width": 140
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 0,
+            "y": -30
+        },
+        "size": {
+            "height": 30,
+            "width": 140
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 0,
+            "y": -30
+        },
+        "size": {
+            "height": 30,
+            "width": 140
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 0,
+            "y": -30
+        },
+        "size": {
+            "height": 30,
+            "width": 140
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 0,
+            "y": -30
+        },
+        "size": {
+            "height": 30,
+            "width": 140
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 0,
+            "y": -30
+        },
+        "size": {
+            "height": 30,
+            "width": 140
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 0,
+            "y": -30
+        },
+        "size": {
+            "height": 30,
+            "width": 140
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_naver type_motion_hat is_fadeout",
+        "text": "",
+        "location": {
+            "x": 317,
+            "y": 53
+        },
+        "size": {
+            "height": 58,
+            "width": 68
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_naver type_motion_n is_fadein",
+        "text": "NAVER",
+        "location": {
+            "x": 317,
+            "y": 53
+        },
+        "size": {
+            "height": 58,
+            "width": 67
+        }
+    },
+    {
+        "tag": "input",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "sm",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "fbm",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "acr",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "acq",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "qdt",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "ie",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "acir",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "os",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "bid",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "pkid",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "eid",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "mra",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "input",
+        "id": "query",
+        "class": "search_input",
+        "text": "",
+        "location": {
+            "x": 384,
+            "y": 53
+        },
+        "size": {
+            "height": 58,
+            "width": 480
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "btn_search",
+        "text": "검색",
+        "location": {
+            "x": 961,
+            "y": 53
+        },
+        "size": {
+            "height": 58,
+            "width": 62
+        }
+    },
+    {
+        "tag": "input",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "button",
+        "id": "ke_kbd_btn",
+        "class": "btn_keyboard",
+        "text": "",
+        "location": {
+            "x": 906,
+            "y": 53
+        },
+        "size": {
+            "height": 58,
+            "width": 30
+        }
+    },
+    {
+        "tag": "button",
+        "id": "nautocomplete",
+        "class": "btn_arrow",
+        "text": "자동완성/최근검색어펼치기",
+        "location": {
+            "x": 939,
+            "y": 53
+        },
+        "size": {
+            "height": 58,
+            "width": 22
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "item _delAll",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "kwd_help",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "kwd_help",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "btn_help",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "btn_close",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "sb-kh-extra-keywords-retry",
+        "class": "btn_retry",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_dsc",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "sb-kh-recomm-toggle",
+        "class": "bt_switch",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "close _keywordOnOff",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "close _close",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link _alert_link",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_dsc",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "bt_switch active _plus_btn",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_view",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_view",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "btn_login",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "btn_close _plus_layer_close",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "close _suggestOnOff",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "report",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "close _close",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_headline",
+        "text": "",
+        "location": {
+            "x": 1066,
+            "y": 86
+        },
+        "size": {
+            "height": 108,
+            "width": 244
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "메일",
+        "location": {
+            "x": 332,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "카페",
+        "location": {
+            "x": 393,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "블로그",
+        "location": {
+            "x": 454,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "스토어",
+        "location": {
+            "x": 516,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "뉴스",
+        "location": {
+            "x": 577,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "증권",
+        "location": {
+            "x": 638,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "부동산",
+        "location": {
+            "x": 699,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "지도",
+        "location": {
+            "x": 760,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "웹툰",
+        "location": {
+            "x": 822,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "치지직\n추천",
+        "location": {
+            "x": 883,
+            "y": 120
+        },
+        "size": {
+            "height": 68,
+            "width": 64
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_service",
+        "text": "바로가기 펼침",
+        "location": {
+            "x": 944,
+            "y": 120
+        },
+        "size": {
+            "height": 44,
+            "width": 64
+        }
+    },
+    {
+        "tag": "button",
+        "id": "topAsideButton",
+        "class": "btn_menu",
+        "text": "확장 영역",
+        "location": {
+            "x": 18,
+            "y": 5
+        },
+        "size": {
+            "height": 48,
+            "width": 48
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_pay",
+        "text": "페이 바로가기",
+        "location": {
+            "x": 71,
+            "y": 5
+        },
+        "size": {
+            "height": 48,
+            "width": 48
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "btn_notify",
+        "text": "알림",
+        "location": {
+            "x": 1220,
+            "y": 5
+        },
+        "size": {
+            "height": 48,
+            "width": 48
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_shopping",
+        "text": "장바구니\n알림",
+        "location": {
+            "x": 1272,
+            "y": 5
+        },
+        "size": {
+            "height": 48,
+            "width": 48
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab_text___IuWnG",
+        "text": "뉴스스탠드",
+        "location": {
+            "x": 50,
+            "y": 380
+        },
+        "size": {
+            "height": 23,
+            "width": 82
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab_text___IuWnG",
+        "text": "언론사편집",
+        "location": {
+            "x": 132,
+            "y": 380
+        },
+        "size": {
+            "height": 23,
+            "width": 100
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "엔터",
+        "location": {
+            "x": 258,
+            "y": 380
+        },
+        "size": {
+            "height": 23,
+            "width": 33
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "스포츠LIVE",
+        "location": {
+            "x": 317,
+            "y": 380
+        },
+        "size": {
+            "height": 23,
+            "width": 102
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "경제",
+        "location": {
+            "x": 445,
+            "y": 380
+        },
+        "size": {
+            "height": 23,
+            "width": 33
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "쇼핑투데이",
+        "location": {
+            "x": 504,
+            "y": 380
+        },
+        "size": {
+            "height": 23,
+            "width": 82
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderSubView-module__btn_more___HnWNR",
+        "text": "전체언론사",
+        "location": {
+            "x": 70,
+            "y": 432
+        },
+        "size": {
+            "height": 26,
+            "width": 86
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderSubView-module__news_media___YJm6A",
+        "text": "연합뉴스",
+        "location": {
+            "x": 181,
+            "y": 432
+        },
+        "size": {
+            "height": 26,
+            "width": 72
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderSubView-module__link_home___hdZDg ContentHeaderSubView-module__sub___T9JeN",
+        "text": "뉴스스탠드",
+        "location": {
+            "x": 681,
+            "y": 432
+        },
+        "size": {
+            "height": 26,
+            "width": 72
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderSubView-module__link_home___hdZDg",
+        "text": "뉴스홈",
+        "location": {
+            "x": 752,
+            "y": 432
+        },
+        "size": {
+            "height": 26,
+            "width": 68
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 51,
+            "y": 489
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 182,
+            "y": 489
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 314,
+            "y": 489
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 445,
+            "y": 489
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 576,
+            "y": 489
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 707,
+            "y": 489
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 51,
+            "y": 545
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 182,
+            "y": 545
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 314,
+            "y": 545
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 445,
+            "y": 545
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 576,
+            "y": 545
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 707,
+            "y": 545
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 51,
+            "y": 601
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 182,
+            "y": 601
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 314,
+            "y": 601
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 445,
+            "y": 601
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 576,
+            "y": 601
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 707,
+            "y": 601
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 51,
+            "y": 657
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 182,
+            "y": 657
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 314,
+            "y": 657
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 445,
+            "y": 657
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 576,
+            "y": 657
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MediaSubscriptionView-module__news_thumb___IA4y2",
+        "text": "",
+        "location": {
+            "x": 707,
+            "y": 657
+        },
+        "size": {
+            "height": 56,
+            "width": 131
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "ContentPagingView-module__btn_view_list___j7eNR",
+        "text": "리스트형",
+        "location": {
+            "x": 762,
+            "y": 731
+        },
+        "size": {
+            "height": 56,
+            "width": 49
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "ContentPagingView-module__btn_view_thumb___zZhgR",
+        "text": "썸네일형",
+        "location": {
+            "x": 811,
+            "y": 731
+        },
+        "size": {
+            "height": 56,
+            "width": 49
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "ContentPagingView-module__btn_prev___JaBFN",
+        "text": "이전 페이지",
+        "location": {
+            "x": 331,
+            "y": 741
+        },
+        "size": {
+            "height": 36,
+            "width": 36
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "ContentPagingView-module__btn_next___ZBhby",
+        "text": "다음 페이지",
+        "location": {
+            "x": 523,
+            "y": 741
+        },
+        "size": {
+            "height": 36,
+            "width": 36
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab_text___IuWnG",
+        "text": "추천",
+        "location": {
+            "x": 50,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 33
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "카테크",
+        "location": {
+            "x": 109,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 49
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "웹툰",
+        "location": {
+            "x": 184,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 33
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "패션뷰티",
+        "location": {
+            "x": 243,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 66
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "리빙푸드",
+        "location": {
+            "x": 334,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 66
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "책방",
+        "location": {
+            "x": 426,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 33
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "지식",
+        "location": {
+            "x": 485,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 33
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "건강",
+        "location": {
+            "x": 543,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 33
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__tab___uYoNi",
+        "text": "게임",
+        "location": {
+            "x": 602,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 33
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "ContentHeaderView-module__link_subscribe___GNbIO",
+        "text": "구독홈",
+        "location": {
+            "x": 786,
+            "y": 1432
+        },
+        "size": {
+            "height": 23,
+            "width": 54
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR FeedHeaderSubView-module__type_home___X3xHe",
+        "text": "웹툰홈",
+        "location": {
+            "x": 70,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 43
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR",
+        "text": "요일별웹툰",
+        "location": {
+            "x": 113,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 90
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR",
+        "text": "베스트도전",
+        "location": {
+            "x": 202,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 90
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR FeedHeaderSubView-module__type_home___X3xHe",
+        "text": "웹소설홈",
+        "location": {
+            "x": 316,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 57
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR",
+        "text": "시리즈에디션",
+        "location": {
+            "x": 373,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 104
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR",
+        "text": "베스트리그",
+        "location": {
+            "x": 477,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 90
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR FeedHeaderSubView-module__type_home___X3xHe",
+        "text": "시리즈홈",
+        "location": {
+            "x": 590,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 57
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR",
+        "text": "웹소설",
+        "location": {
+            "x": 648,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 61
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "FeedHeaderSubView-module__link_whs___nquxR",
+        "text": "만화",
+        "location": {
+            "x": 709,
+            "y": 1487
+        },
+        "size": {
+            "height": 21,
+            "width": 47
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_more___D4OzB",
+        "text": "토요웹툰 전체보기",
+        "location": {
+            "x": 704,
+            "y": 1540
+        },
+        "size": {
+            "height": 37,
+            "width": 136
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "청소년 관람불가\nUP\n만취남녀\n금",
+        "location": {
+            "x": 50,
+            "y": 1577
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "UP\n호랑이형님\n이상규",
+        "location": {
+            "x": 186,
+            "y": 1577
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "청소년 관람불가\nUP\n시든 꽃에 눈물을\n개",
+        "location": {
+            "x": 323,
+            "y": 1577
+        },
+        "size": {
+            "height": 214,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "UP\n마도전생기\n포스스튜디오 / codezero",
+        "location": {
+            "x": 459,
+            "y": 1577
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "UP\n절대군림\n박시대 / 장영훈",
+        "location": {
+            "x": 595,
+            "y": 1577
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "UP\n오늘만 사는 기사\n가나라 / 이안 / 소울풍",
+        "location": {
+            "x": 732,
+            "y": 1577
+        },
+        "size": {
+            "height": 214,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "UP\n킬러 배드로\n김정현 / 임리나",
+        "location": {
+            "x": 50,
+            "y": 1811
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "초인의 시대\n섭이",
+        "location": {
+            "x": 186,
+            "y": 1811
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "청소년 관람불가\nUP\n데이워커\nMUTE",
+        "location": {
+            "x": 323,
+            "y": 1811
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "UP\n99강화나무몽둥이\n홍실 / 지페리",
+        "location": {
+            "x": 459,
+            "y": 1811
+        },
+        "size": {
+            "height": 214,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "UP\n아홉수 우리들\n수박양",
+        "location": {
+            "x": 595,
+            "y": 1811
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPoster-module__link_item___gNbik",
+        "text": "UP\n작전명 순정\n꼬까리 / 들덤",
+        "location": {
+            "x": 732,
+            "y": 1811
+        },
+        "size": {
+            "height": 194,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_filter___kzclJ",
+        "text": "신작",
+        "location": {
+            "x": 249,
+            "y": 2070
+        },
+        "size": {
+            "height": 28,
+            "width": 49
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_filter___kzclJ",
+        "text": "완결",
+        "location": {
+            "x": 298,
+            "y": 2070
+        },
+        "size": {
+            "height": 28,
+            "width": 49
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "1\n위\n범죄도시0\n박태준 / 정종택\n외모지상주의 작가 작품",
+        "location": {
+            "x": 50,
+            "y": 2110
+        },
+        "size": {
+            "height": 216,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "2\n위\n부활소년\n류\n사신소년 작가 작품",
+        "location": {
+            "x": 186,
+            "y": 2110
+        },
+        "size": {
+            "height": 216,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "3\n위\n천씨세가의 망나니가 되었다\n고로 / 백몽",
+        "location": {
+            "x": 323,
+            "y": 2110
+        },
+        "size": {
+            "height": 214,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "청소년 관람불가\n4\n위\n나쁜남자가 돼라!\n이연 / 자개\n남편을 죽여줘요 작가 작품",
+        "location": {
+            "x": 459,
+            "y": 2110
+        },
+        "size": {
+            "height": 236,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "5\n위\n양치기 마법사\n박만사, 김꿀빨 / YU / 수박복숭아\n오브차카 작가 작품",
+        "location": {
+            "x": 595,
+            "y": 2110
+        },
+        "size": {
+            "height": 216,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "6\n위\n육아부터 하는 연애\nS / 최연\n시간제 부부 작가 작품",
+        "location": {
+            "x": 732,
+            "y": 2110
+        },
+        "size": {
+            "height": 236,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\nUP\n도시낭인 리로드 [독점]\n간짜장",
+        "location": {
+            "x": 50,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\nUP\n전지적 독자 시점\n싱숑",
+        "location": {
+            "x": 186,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\n대공비가 체질입니다 [독점]\n레치모나",
+        "location": {
+            "x": 323,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\n악녀사주 [독점]\n코양희/노끼",
+        "location": {
+            "x": 459,
+            "y": 2431
+        },
+        "size": {
+            "height": 208,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\n헐값 [독점]\n문소언",
+        "location": {
+            "x": 595,
+            "y": 2431
+        },
+        "size": {
+            "height": 208,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\n죽음은 잠 못 이루고 [독점]\n인식론",
+        "location": {
+            "x": 732,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 868,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 1004,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 1141,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 1277,
+            "y": 2431
+        },
+        "size": {
+            "height": 208,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 1413,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 1550,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 1686,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 1822,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 1959,
+            "y": 2431
+        },
+        "size": {
+            "height": 208,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 2095,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 2231,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 2368,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 2504,
+            "y": 2431
+        },
+        "size": {
+            "height": 208,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 2640,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 2777,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 2913,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 3049,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "",
+        "location": {
+            "x": 3186,
+            "y": 2431
+        },
+        "size": {
+            "height": 228,
+            "width": 108
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "SixColumnPosterView-module__btn_next___ElULf",
+        "text": "다음 페이지",
+        "location": {
+            "x": 816,
+            "y": 2491
+        },
+        "size": {
+            "height": 36,
+            "width": 36
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_filter___kzclJ",
+        "text": "신작",
+        "location": {
+            "x": 264,
+            "y": 2704
+        },
+        "size": {
+            "height": 28,
+            "width": 49
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_filter___kzclJ",
+        "text": "완결",
+        "location": {
+            "x": 313,
+            "y": 2704
+        },
+        "size": {
+            "height": 28,
+            "width": 49
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "1\n위\n회귀한 변호사는 대박 갈비집 아들\n현판코코넛칩\n21화 무료",
+        "location": {
+            "x": 50,
+            "y": 2744
+        },
+        "size": {
+            "height": 252,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\n2\n위\n비서 자격 [독점]\n로맨스유라떼\n5화 무료",
+        "location": {
+            "x": 186,
+            "y": 2744
+        },
+        "size": {
+            "height": 252,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\n3\n위\nUP\n현질수선전 [독점]\n무협시저디\n25화 무료",
+        "location": {
+            "x": 323,
+            "y": 2744
+        },
+        "size": {
+            "height": 252,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "4\n위\n전능 AI와 함께 수능날로 회귀했다.\n현판백원도둑놈\n25화 무료",
+        "location": {
+            "x": 459,
+            "y": 2744
+        },
+        "size": {
+            "height": 252,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "시리즈에디션\n5\n위\n상관세가 소저는 천재 술법사 [독점]\n로판원더스, 벽총관\n5화 무료",
+        "location": {
+            "x": 595,
+            "y": 2744
+        },
+        "size": {
+            "height": 252,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SixColumnPosterView-module__link_item___soec8",
+        "text": "6\n위\nUP\n인생 치트키 얻고 로또 1등의 힐링 라이프\n현판소래담\n23화 무료",
+        "location": {
+            "x": 732,
+            "y": 2744
+        },
+        "size": {
+            "height": 252,
+            "width": 108
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "FeedView-module__btn_more___da7qt",
+        "text": "펼쳐보기",
+        "location": {
+            "x": 30,
+            "y": 3021
+        },
+        "size": {
+            "height": 56,
+            "width": 830
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MyView-module__link_login___HpHMW",
+        "text": "NAVER\n로그인",
+        "location": {
+            "x": 910,
+            "y": 270
+        },
+        "size": {
+            "height": 56,
+            "width": 380
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MyView-module__link_more___sbxGh",
+        "text": "아이디 찾기",
+        "location": {
+            "x": 971,
+            "y": 342
+        },
+        "size": {
+            "height": 20,
+            "width": 71
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MyView-module__link_more___sbxGh",
+        "text": "비밀번호 찾기",
+        "location": {
+            "x": 1042,
+            "y": 342
+        },
+        "size": {
+            "height": 20,
+            "width": 109
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MyView-module__link_more___sbxGh",
+        "text": "회원가입",
+        "location": {
+            "x": 1151,
+            "y": 342
+        },
+        "size": {
+            "height": 20,
+            "width": 78
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__header_title___Uk3ix",
+        "text": "날씨",
+        "location": {
+            "x": 908,
+            "y": 942
+        },
+        "size": {
+            "height": 40,
+            "width": 38
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__link_info___XZObq",
+        "text": "예보 비교",
+        "location": {
+            "x": 946,
+            "y": 949
+        },
+        "size": {
+            "height": 26,
+            "width": 81
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__link_info_detail___miKv5",
+        "text": "12.7°\n구름많음\n최저기온\n3°\n최고기온\n12°",
+        "location": {
+            "x": 908,
+            "y": 1010
+        },
+        "size": {
+            "height": 118,
+            "width": 180
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__link_weather_dust___sLUpk",
+        "text": "미세보통초미세보통",
+        "location": {
+            "x": 908,
+            "y": 1134
+        },
+        "size": {
+            "height": 20,
+            "width": 180
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__link_info_weather___NwVr2",
+        "text": "16시\n흐림\n12°\n18\n흐림\n10°\n20\n흐림\n8°\n22\n구름많음\n7°\n0\n흐림\n6°",
+        "location": {
+            "x": 1112,
+            "y": 1009
+        },
+        "size": {
+            "height": 143,
+            "width": 180
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__header_title___Uk3ix",
+        "text": "증시",
+        "location": {
+            "x": 908,
+            "y": 1194
+        },
+        "size": {
+            "height": 40,
+            "width": 38
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "DailyBoardView-module__btn_info___Vnd0i",
+        "text": "정보 더보기",
+        "location": {
+            "x": 942,
+            "y": 1204
+        },
+        "size": {
+            "height": 20,
+            "width": 20
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "DailyBoardView-module__btn_close___NzNry",
+        "text": "",
+        "location": {
+            "x": 95,
+            "y": 0
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "DailyBoardView-module__btn_refresh___YFJ90",
+        "text": "새로고침",
+        "location": {
+            "x": 1271,
+            "y": 1194
+        },
+        "size": {
+            "height": 40,
+            "width": 21
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__link_stock___d9uPi",
+        "text": "삼성전자\n하락\n2.34%\n183,500",
+        "location": {
+            "x": 1112,
+            "y": 1249
+        },
+        "size": {
+            "height": 36,
+            "width": 180
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__link_stock___d9uPi",
+        "text": "SK하이닉스\n하락\n2.15%\n910,000",
+        "location": {
+            "x": 1112,
+            "y": 1286
+        },
+        "size": {
+            "height": 38,
+            "width": 180
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__link_stock___d9uPi",
+        "text": "두산에너빌리티\n상승\n2.90%\n106,500",
+        "location": {
+            "x": 1112,
+            "y": 1325
+        },
+        "size": {
+            "height": 38,
+            "width": 180
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "DailyBoardView-module__link_stock___d9uPi DailyBoardView-module__type_more___EmA_a",
+        "text": "인기종목 더보기",
+        "location": {
+            "x": 1112,
+            "y": 1364
+        },
+        "size": {
+            "height": 38,
+            "width": 180
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "로그인하기",
+        "location": {
+            "x": 1281,
+            "y": 1770
+        },
+        "size": {
+            "height": 0,
+            "width": 0
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__link_table___fbmpL",
+        "text": "2026년 3월 캘린더 - 이번 달의 일정을 날짜별로 확인할 수 있는 표입니다. 각 셀에는 날짜와 해당 일정이 포함됩니다.\n일 월 화 수 목 금 토\n1 2 3 4 5 6 7\n8 9 10 11 12 13 14\n15 16 17 18 19 20 21\n22 23 24 25 26 27 28\n29 30 31 1 2 3 4",
+        "location": {
+            "x": 1104,
+            "y": 1770
+        },
+        "size": {
+            "height": 134,
+            "width": 178
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "RightWidget-module__vibe_btn_refresh___jAMWI",
+        "text": "다른 추천 보기",
+        "location": {
+            "x": 1165,
+            "y": 1946
+        },
+        "size": {
+            "height": 22,
+            "width": 109
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__link_music___kPZQf",
+        "text": "산 마르코 광장의 활기찬 풍경\n재생",
+        "location": {
+            "x": 926,
+            "y": 1980
+        },
+        "size": {
+            "height": 126,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__link_music___kPZQf",
+        "text": "곤돌라 악단의 게릴라 공연\n재생",
+        "location": {
+            "x": 1046,
+            "y": 1980
+        },
+        "size": {
+            "height": 126,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__link_music___kPZQf",
+        "text": "아말피 해변에서 즐기는 여유\n재생",
+        "location": {
+            "x": 1166,
+            "y": 1980
+        },
+        "size": {
+            "height": 126,
+            "width": 108
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__link_info_text___fDqac",
+        "text": "",
+        "location": {
+            "x": 1328,
+            "y": 1728
+        },
+        "size": {
+            "height": 47,
+            "width": 376
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__link_info_today___mZJUr",
+        "text": "",
+        "location": {
+            "x": 1328,
+            "y": 1775
+        },
+        "size": {
+            "height": 111,
+            "width": 376
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__link_search___FctCQ",
+        "text": "",
+        "location": {
+            "x": 1658,
+            "y": 1869
+        },
+        "size": {
+            "height": 40,
+            "width": 40
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__papago_box___YDEIF RightWidget-module__tool_box___yV99J",
+        "text": "",
+        "location": {
+            "x": 1328,
+            "y": 1932
+        },
+        "size": {
+            "height": 192,
+            "width": 186
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__memo_box___ifgQN RightWidget-module__tool_box___yV99J",
+        "text": "",
+        "location": {
+            "x": 1526,
+            "y": 1932
+        },
+        "size": {
+            "height": 192,
+            "width": 186
+        }
+    },
+    {
+        "tag": "button",
+        "id": "",
+        "class": "RightWidget-module__btn_next___gLXeX",
+        "text": "다음 페이지",
+        "location": {
+            "x": 1282,
+            "y": 1902
+        },
+        "size": {
+            "height": 48,
+            "width": 48
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "RightWidget-module__link_download___cH0Or",
+        "text": "모바일 네이버 메인\n 열기",
+        "location": {
+            "x": 890,
+            "y": 2127
+        },
+        "size": {
+            "height": 65,
+            "width": 420
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "SettingView-module__btn_setting___Z_3Uu SettingView-module__type_top___GkN8V",
+        "text": "최상단으로 이동",
+        "location": {
+            "x": 726,
+            "y": 353
+        },
+        "size": {
+            "height": 40,
+            "width": 40
+        }
+    },
+    {
+        "tag": "a",
+        "id": "viewSetting",
+        "class": "SettingView-module__btn_setting___Z_3Uu SettingView-module__type_system___kev9z",
+        "text": "홈 설정",
+        "location": {
+            "x": 778,
+            "y": 353
+        },
+        "size": {
+            "height": 40,
+            "width": 40
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "MobileButtonView-module__link_mobile_v___Ptkx7",
+        "text": "모바일 버전으로 보기",
+        "location": {
+            "x": 357,
+            "y": 331
+        },
+        "size": {
+            "height": 56,
+            "width": 223
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "공지사항",
+        "location": {
+            "x": 30,
+            "y": 3319
+        },
+        "size": {
+            "height": 18,
+            "width": 53
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_all",
+        "text": "서비스 전체보기",
+        "location": {
+            "x": 1195,
+            "y": 3320
+        },
+        "size": {
+            "height": 17,
+            "width": 115
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "네이버 임팩트",
+        "location": {
+            "x": 117,
+            "y": 3379
+        },
+        "size": {
+            "height": 20,
+            "width": 84
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "네이버 비즈니스",
+        "location": {
+            "x": 201,
+            "y": 3379
+        },
+        "size": {
+            "height": 20,
+            "width": 114
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "네이버 비즈니스 스쿨",
+        "location": {
+            "x": 315,
+            "y": 3379
+        },
+        "size": {
+            "height": 20,
+            "width": 145
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "네이버 광고 등록",
+        "location": {
+            "x": 460,
+            "y": 3379
+        },
+        "size": {
+            "height": 20,
+            "width": 119
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "스토어 개설",
+        "location": {
+            "x": 579,
+            "y": 3379
+        },
+        "size": {
+            "height": 20,
+            "width": 88
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "지역업체 등록",
+        "location": {
+            "x": 666,
+            "y": 3379
+        },
+        "size": {
+            "height": 20,
+            "width": 101
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "엑스퍼트 등록",
+        "location": {
+            "x": 767,
+            "y": 3379
+        },
+        "size": {
+            "height": 20,
+            "width": 101
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "네이버 개발자 센터",
+        "location": {
+            "x": 117,
+            "y": 3409
+        },
+        "size": {
+            "height": 20,
+            "width": 115
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "오픈 API",
+        "location": {
+            "x": 232,
+            "y": 3409
+        },
+        "size": {
+            "height": 20,
+            "width": 67
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "오픈소스",
+        "location": {
+            "x": 299,
+            "y": 3409
+        },
+        "size": {
+            "height": 20,
+            "width": 70
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "네이버 D2",
+        "location": {
+            "x": 369,
+            "y": 3409
+        },
+        "size": {
+            "height": 20,
+            "width": 78
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "네이버 D2SF",
+        "location": {
+            "x": 447,
+            "y": 3409
+        },
+        "size": {
+            "height": 20,
+            "width": 91
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "link_partner",
+        "text": "네이버 랩스",
+        "location": {
+            "x": 538,
+            "y": 3409
+        },
+        "size": {
+            "height": 20,
+            "width": 88
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "service_logo",
+        "text": "",
+        "location": {
+            "x": 1102,
+            "y": 3380
+        },
+        "size": {
+            "height": 48,
+            "width": 48
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "dsc",
+        "text": "이용안내",
+        "location": {
+            "x": 1007,
+            "y": 3403
+        },
+        "size": {
+            "height": 23,
+            "width": 84
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "service_logo",
+        "text": "",
+        "location": {
+            "x": 1262,
+            "y": 3380
+        },
+        "size": {
+            "height": 48,
+            "width": 48
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "dsc",
+        "text": "바로가기",
+        "location": {
+            "x": 1180,
+            "y": 3403
+        },
+        "size": {
+            "height": 23,
+            "width": 71
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "회사소개",
+        "location": {
+            "x": 272,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 53
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "인재채용",
+        "location": {
+            "x": 346,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 53
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "제휴제안",
+        "location": {
+            "x": 420,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 53
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "이용약관",
+        "location": {
+            "x": 494,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 53
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "개인정보처리방침",
+        "location": {
+            "x": 568,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 106
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "청소년보호정책",
+        "location": {
+            "x": 695,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 93
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "네이버 정책",
+        "location": {
+            "x": 809,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 71
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "고객센터",
+        "location": {
+            "x": 900,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 53
+        }
+    },
+    {
+        "tag": "a",
+        "id": "",
+        "class": "",
+        "text": "ⓒ NAVER Corp.",
+        "location": {
+            "x": 970,
+            "y": 3471
+        },
+        "size": {
+            "height": 18,
+            "width": 98
+        }
+    }
+]

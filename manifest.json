@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Next UI - AI Assistant",
+  "version": "1.0",
+  "description": "AI 기반 웹 UI 리파이너리",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
+}
