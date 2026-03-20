@@ -1,4 +1,5 @@
-const MODEL_NAME = "gemini-2.5-flash";
+
+const MODEL_NAME = "gemini-2.0-flash";
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === "ASK_GEMINI") {
@@ -26,29 +27,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // background.js 내의 callGemini 함수 부분 수정
+// background.js 내의 callGemini 함수 수정
 async function callGemini(userPrompt, elements, apiKey) {
-  // 모델 경로를 'models/gemini-1.5-flash'로 정확히 수정
-  const MODEL_ID = "gemini-1.5-flash";
-  const url = `https://generativelanguage.googleapis.com/v1/models/${MODEL_ID}:generateContent?key=${apiKey}`;
-  const response = await fetch(url, {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+  try {
+    const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      contents: [{ 
-        parts: [{ 
-          text: `사용자 요청: ${userPrompt}\n요소 목록: ${JSON.stringify(elements)}\n위 목록 중 클릭할 요소의 selector를 JSON {"target": "..."} 형식으로만 답하세요.` 
-        }] 
-      }]
-    })
-  });
+        contents: [{
+            parts: [{
+            text: `사용자 요청: "${userPrompt}"
+            이 웹페이지의 배경을 완전히 검은색으로 바꾸고 글자는 흰색으로 바꾸는 CSS 코드를 작성하세요. 
+            단순히 body만 바꾸지 말고, 페이지 전체 레이아웃이 검게 보이도록 모든 배경 요소를 포함하세요.
+            반드시 {"css": "코드"} 형식의 JSON으로만 답하세요.`            }]
+        }],
+        generationConfig: {
+            response_mime_type: "application/json"
+                }
+            })
+        });
 
-  const data = await response.json();
-  
-  if (data.error) {
-    throw new Error(data.error.message); // 여기서 'models/not found' 에러가 발생했었음
+    const data = await response.json();
+
+    if (data.error) {
+      console.error("--- [로그 3-에러] 상세 내용 ---", data.error);
+      throw new Error(data.error.message);
+    }
+
+    const aiText = data.candidates[0].content.parts[0].text;
+    // 만약 AI가 ```json ... ``` 같은 마크다운을 붙여준다면 정규식으로 추출
+    const jsonMatch = aiText.match(/\{.*\}/s);
+    return JSON.parse(jsonMatch ? jsonMatch[0] : aiText);
+
+  } catch (error) {
+    console.error("[로그 3-에러] 호출 실패:", error);
+    throw error;
   }
-
-  const aiText = data.candidates[0].content.parts[0].text;
-  const jsonMatch = aiText.match(/\{.*\}/);
-  return JSON.parse(jsonMatch[0]);
 }

@@ -48,19 +48,45 @@ function executeAction(selector) {
 
 // Popup으로부터 메시지를 받는 리스너
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "EXTRACT_AND_ANALYZE") {
-    // 1. DOM 요소 수집 (기존 getClickableElements 함수 필요)
-    const elements = getClickableElements(); 
-    
-    // 2. Background로 API 분석 요청 전송
-    chrome.runtime.sendMessage({
-      type: "ASK_GEMINI",
-      prompt: request.prompt,
-      elements: elements
-    }, (response) => {
-      if (response && response.target) {
-        executeAction(response.target);
-      }
-    });
-  }
+    if (request.action === "EXTRACT_AND_ANALYZE") {
+        const elements = getClickableElements(); 
+        
+        chrome.runtime.sendMessage({
+          type: "ASK_GEMINI",
+          prompt: request.prompt,
+          elements: elements
+        }, (response) => {
+          // [수정] 응답에 css가 있으면 페이지에 입힙니다.
+          if (response && response.css) {
+            applyCustomStyle(response.css);
+          }
+        });
+    }
 });
+
+
+// content.js 내의 applyCustomStyle 함수 수정
+function applyCustomStyle(cssCode) {
+    let styleTag = document.getElementById('gemini-style');
+    if (!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'gemini-style';
+        document.head.appendChild(styleTag);
+    }
+    
+    // Gemini가 준 CSS가 단순할 경우를 대비해, 
+    // 모든 영역을 강제로 검게 만드는 '치트키' CSS를 추가합니다.
+    const forceDark = `
+        html, body, #container, #contents, .main_content { 
+            background-color: #000000 !important; 
+            background: #000000 !important;
+            color: #ffffff !important; 
+        }
+        div, section, header, footer {
+            background-color: transparent !important;
+        }
+    `;
+    
+    styleTag.textContent = cssCode + forceDark; 
+    console.log("[로그] 스타일 강제 적용 완료!");
+}
