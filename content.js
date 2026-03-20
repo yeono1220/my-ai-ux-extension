@@ -1,21 +1,26 @@
 /**
  * 1. 현재 페이지에서 클릭 가능한 모든 요소(버튼, 링크 등) 수집
  */
+// content.js 수정 부분
 function getClickableElements() {
   const elements = document.querySelectorAll('button, a, [role="button"], input[type="button"], input[type="submit"]');
   return Array.from(elements).map(el => {
-    // 부모 요소나 본인의 텍스트를 조합하여 문맥 파악
+    const rect = el.getBoundingClientRect(); // 파이썬의 location, size와 동일한 역할
     const text = el.innerText.trim() || el.getAttribute('aria-label') || el.value || "";
+    
     return {
+      tag: el.tagName.toLowerCase(),
       text: text,
       id: el.id || "",
       className: el.className || "",
-      // 해당 요소를 다시 찾기 위한 최적의 CSS Selector 생성
-      selector: getUniqueSelector(el)
+      selector: getUniqueSelector(el),
+      // Gemini에게 위치 정보를 주어 정확도를 높임
+      location: { x: Math.round(rect.left), y: Math.round(rect.top) },
+      size: { width: Math.round(rect.width), height: Math.round(rect.height) },
+      isVisible: rect.width > 0 && rect.height > 0 // 실제로 보이는 요소인지 확인
     };
-  }).filter(el => el.text.length > 0).slice(0, 100); // 상위 100개로 제한 (토큰 절약)
+  }).filter(el => el.text.length > 0 && el.isVisible).slice(0, 50); 
 }
-
 /**
  * 2. 요소를 특정하기 위한 고유 Selector 생성 함수
  */

@@ -20,15 +20,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function callGemini(userPrompt, elements, apiKey) {
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
   // 제미나이에게 줄 프롬프트 (가장 중요!)
-  const finalPrompt = `
-    당신은 웹 UI 자동화 전문가입니다.
-    사용자 요청: "${userPrompt}"
-    현재 페이지의 버튼/링크 목록: ${JSON.stringify(elements)}
+  // background.js 내 프롬프트 수정
+const finalPrompt = `
+  당신은 웹 UI 분석 전문가입니다.
+  사용자 요청: "${userPrompt}"
+  
+  아래는 현재 페이지의 클릭 가능한 요소 목록입니다. 
+  각 요소는 텍스트, Selector, 위치(x, y), 크기 정보를 포함하고 있습니다.
+  목록: ${JSON.stringify(elements)}
 
-    목록 중에서 사용자의 요청을 수행하기 위해 클릭해야 할 가장 적절한 'selector'를 딱 하나만 고르세요.
-    반드시 아래 JSON 형식으로만 답변하세요. 다른 설명은 절대 하지 마세요.
-    {"target": "선택한_selector_문자열"}
-  `;
+  [지침]
+  1. 사용자의 의도와 가장 일치하는 텍스트를 가진 요소를 찾으세요.
+  2. 만약 텍스트가 모호하다면, 일반적인 웹 레이아웃(예: 상단 우측은 로그인/마이페이지)을 고려하세요.
+  3. 반드시 아래 JSON 형식으로만 응답하세요:
+  {"target": "선택한_selector"}
+`;
 
   try {
     const response = await fetch(url, {
