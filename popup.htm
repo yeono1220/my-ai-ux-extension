@@ -3,15 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <style>
-    body { width: 300px; padding: 15px; font-family: sans-serif; }
-    input { width: 100%; padding: 10px; margin-bottom: 10px; }
-    button { width: 100%; background: #002D56; color: white; border: none; padding: 10px; cursor: pointer; }
+    body { width: 320px; padding: 15px; font-family: 'Malgun Gothic', sans-serif; background: #f9f9f9; }
+    h3 { color: #002D56; margin-bottom: 15px; display: flex; align-items: center; }
+    .icon { margin-right: 8px; }
+    
+    input { 
+      width: 100%; padding: 12px; margin-bottom: 10px; 
+      border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
+    }
+    
+    button { 
+      width: 100%; background: #002D56; color: white; border: none; 
+      padding: 12px; cursor: pointer; border-radius: 4px; font-weight: bold;
+    }
+    button:hover { background: #004080; }
+
+    /* 가이드 상태 표시 영역 */
+    #guideStatus {
+      margin-top: 15px; padding: 10px; background: #eef6ff;
+      border-radius: 4px; display: none; font-size: 0.9em;
+    }
+    .step-text { color: #002D56; font-weight: bold; }
   </style>
 </head>
 <body>
-  <h3>Next UI Prompt</h3>
-  <input type="text" id="promptInput" placeholder="ex) 블루톤으로 이쁘게 바꿔줘">
-  <button id="runBtn">적용하기</button>
+  <h3><span class="icon">✨</span>반딧불이 가이드</h3>
+  <p style="font-size: 0.85em; color: #666;">무엇을 도와드릴까요? (예: 로그인하고 싶어, 서류 떼고 싶어)</p>
+  
+  <input type="text" id="promptInput" placeholder="예) 계좌이체 하는 법 알려줘">
+  <button id="runBtn">안내 시작하기</button>
+
+  <div id="guideStatus">
+    <div class="step-text">📍 현재 진행 단계</div>
+    <div id="currentStep">분석 중...</div>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>

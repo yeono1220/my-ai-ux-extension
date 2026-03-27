@@ -1,10 +1,10 @@
 // options.js
+
+// options.js
 document.getElementById('saveBtn').addEventListener('click', () => {
-  const key = document.getElementById('apiKey').value;
-  chrome.storage.local.set({ GEMINI_API_KEY: key }, () => {
-    const status = document.getElementById('status');
-    status.textContent = "✅ 설정이 저장되었습니다!";
-    setTimeout(() => { status.textContent = ""; }, 2000);
+  const key = document.getElementById('apiKeyInput').value;
+  chrome.storage.local.set({ gemini_api_key: key }, () => {
+    alert('API 키가 안전하게 저장되었습니다.');
   });
 });
 

@@ -1,6 +1,85 @@
 /* 1. 기본 폰트 설정 (Pretendard 추천) */
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+/* 반딧불이 반짝임 효과 */
+@keyframes firefly-glow {
+  0% { box-shadow: 0 0 5px #adff2f, 0 0 10px #adff2f; transform: scale(1); }
+  50% { box-shadow: 0 0 20px #7fff00, 0 0 30px #7fff00; transform: scale(1.05); }
+  100% { box-shadow: 0 0 5px #adff2f, 0 0 10px #adff2f; transform: scale(1); }
+}
+/* 기존 스타일과 충돌을 피하기 위해 접두사(ux-guide-)를 붙입니다 */
+/* 반딧불이 하이라이트 (배경을 해치지 않음) */
+.ux-guide-firefly-target {
+  outline: 5px solid #adff2f !important;
+  outline-offset: 3px;
+  box-shadow: 0 0 15px #adff2f, 0 0 30px rgba(173, 255, 47, 0.5) !important;
+  animation: firefly-pulse 1.5s infinite;
+}
 
+@keyframes firefly-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; transform: scale(1.02); }
+  100% { opacity: 1; }
+}
+
+/* 친절한 설명창 */
+.ux-guide-tooltip {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #002D56;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 50px;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  z-index: 999999;
+  border: 2px solid #adff2f;
+}
+
+@keyframes ux-guide-glow {
+  0% { box-shadow: 0 0 5px #7fff00; }
+  50% { box-shadow: 0 0 25px #7fff00; }
+  100% { box-shadow: 0 0 5px #7fff00; }
+}
+
+/* 툴팁 스타일에서 배경색과 글자색이 전체에 퍼지지 않도록 주의 */
+.firefly-highlight {
+  outline: 3px solid #adff2f !important;
+  animation: firefly-glow 1.5s infinite;
+  position: relative;
+  z-index: 9999;
+}
+
+/* 상단 단계 로드맵 스타일 */
+.ux-roadmap-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 2px solid #adff2f;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  z-index: 10000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.step {
+  margin: 0 15px;
+  color: #888;
+  font-weight: bold;
+}
+
+.step.active {
+  color: #2e8b57;
+  border-bottom: 3px solid #2e8b57;
+}
+
+.step.completed {
+  color: #adff2f;
+}
 :root {
   --next-blue-primary: #002D56;      /* 깊은 네이비 블루 */
   --next-blue-accent: #00D4FF;       /* 형광 하늘색 (포인트) */
