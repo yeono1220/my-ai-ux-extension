@@ -8,6 +8,8 @@ Markdown
 2. **Smart Function Extraction:** 복잡한 메뉴 사이에서 필요한 기능만 위젯으로 추출.
 3. **Accessibility First:** 디지털 약자를 위한 고대비 모드 및 음성 가이드 결합.
 
+
+HCI HCI HCI
 ### 🛠 Tech Stack
 - **Frontend:** React, Tailwind CSS, Chrome Extension API (V3)
 - **AI:** OpenAI GPT-4o-mini (Intent Analysis)

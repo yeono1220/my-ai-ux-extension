@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Company Hierarchy Admin</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <style>
+        :root {
+            --line-color: #cbd5e1;
+            --bg-color: #f8fafc;
+            --node-bg: #ffffff;
+            --primary: #2563eb;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-color);
+            padding: 40px;
+            color: #1e293b;
+        }
+
+        h1 { font-size: 24px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+
+        /* 트리 구조 핵심 스타일 */
+        .nested-sortable {
+            list-style: none;
+            padding-left: 30px;
+            margin-top: 10px;
+            border-left: 2px dashed var(--line-color);
+        }
+
+        .node-item {
+            margin: 10px 0;
+            position: relative;
+        }
+
+        /* 가지(Branch) 선 표현 */
+        .node-item::before {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: -30px;
+            width: 30px;
+            height: 2px;
+            background-color: var(--line-color);
+        }
+
+        .node-content {
+            background: var(--node-bg);
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: grab;
+            min-width: 250px;
+        }
+
+        .node-content:active { cursor: grabbing; }
+
+        .role-badge {
+            font-size: 11px;
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .ghost {
+            opacity: 0.4;
+            border: 2px dashed var(--primary);
+        }
+
+        #log-console {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            height: 150px;
+            background: #1e293b;
+            color: #34d399;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+<h1>🏢 회사 계층 구조 관리 (Owner 전용)</h1>
+<p>카드를 드래그하여 다른 리더 아래로 옮기면 <strong>상속 관계(Parent ID)</strong>가 자동으로 변경됩니다.</p>
+
+<div id="org-tree">
+    <ul class="nested-sortable" id="root-list">
+        <li class="node-item" data-id="1">
+            <div class="node-content">
+                <strong>CEO 고연호</strong>
+                <span class="role-badge">Founder</span>
+            </div>
+            <ul class="nested-sortable">
+                <li class="node-item" data-id="2">
+                    <div class="node-content">
+                        <strong>CTO 개발팀장</strong>
+                        <span class="role-badge">Leadership</span>
+                    </div>
+                    <ul class="nested-sortable">
+                        <li class="node-item" data-id="4">
+                            <div class="node-content">AI 엔지니어 A</div>
+                        </li>
+                        <li class="node-item" data-id="5">
+                            <div class="node-content">백엔드 개발자 B</div>
+                        </li>
+                    </ul>
+                </li>
+                <li class="node-item" data-id="3">
+                    <div class="node-content">
+                        <strong>COO 운영팀장</strong>
+                        <span class="role-badge">Leadership</span>
+                    </div>
+                    <ul class="nested-sortable">
+                        <li class="node-item" data-id="6">
+                            <div class="node-content">마케팅 전문가 C</div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div id="log-console">>> 시스템 대기 중...</div>
+
+<script>
+    const nestedSortables = document.querySelectorAll('.nested-sortable');
+
+    nestedSortables.forEach(el => {
+        new Sortable(el, {
+            group: 'nested', // 중첩 구조 내에서 자유로운 이동 허용
+            animation: 150,
+            fallbackOnBody: true,
+            swapThreshold: 0.65,
+            ghostClass: 'ghost',
+            onEnd: function (evt) {
+                const targetId = evt.item.getAttribute('data-id');
+                const targetName = evt.item.querySelector('strong')?.innerText || "직원";
+                
+                // 새로운 부모 노드 찾기
+                const newParentEl = evt.to.closest('.node-item');
+                const newParentId = newParentEl ? newParentEl.getAttribute('data-id') : "Root";
+                const newParentName = newParentEl ? newParentEl.querySelector('strong').innerText : "최상위(CEO)";
+
+                // DB 업데이트 시뮬레이션
+                updateConsole(`[DB Sync] ${targetName}(ID:${targetId})의 상급자가 [${newParentName}]으로 변경되었습니다.`);
+            }
+        });
+    });
+
+    function updateConsole(msg) {
+        const consoleEl = document.getElementById('log-console');
+        const time = new Date().toLocaleTimeString();
+        consoleEl.innerHTML = `<div>[${time}] ${msg}</div>` + consoleEl.innerHTML;
+    }
+</script>
+
+</body>
+</html>
