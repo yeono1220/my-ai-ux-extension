@@ -219,7 +219,7 @@ function injectStyles() {
       display: flex; align-items: center; gap: 10px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 24px rgba(0,212,255,0.1);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      min-width: 340px;
+      min-width: 500px;
       cursor: grab; user-select: none;
       animation: nui-rise .35s cubic-bezier(.22,1,.36,1);
     }

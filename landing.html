@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Senior-Friendly Digital Guide for Web &amp; App — Team Ieum</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --cyan: #00d4ff;
+    --bg0: #04040e;
+    --bg1: #07142c;
+  }
+  html { scroll-behavior: smooth; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:
+      radial-gradient(1200px 700px at 50% -10%, rgba(0,212,255,.18), transparent 60%),
+      radial-gradient(900px 600px at 90% 110%, rgba(0,120,180,.16), transparent 60%),
+      linear-gradient(160deg, var(--bg0), var(--bg1));
+    background-attachment: fixed;
+    color: #eaf6ff;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+
+  /* ===== animated background grid sheen ===== */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,212,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,.04) 1px, transparent 1px);
+    background-size: 46px 46px;
+    mask-image: radial-gradient(circle at 50% 30%, #000, transparent 75%);
+    -webkit-mask-image: radial-gradient(circle at 50% 30%, #000, transparent 75%);
+    animation: gridDrift 24s linear infinite;
+  }
+  @keyframes gridDrift { from{ background-position: 0 0, 0 0 } to{ background-position: 46px 46px, 46px 46px } }
+
+  /* floating glow orbs (mouse parallax via JS vars) */
+  .orb { position: fixed; border-radius: 50%; filter: blur(70px); opacity: .42; pointer-events: none; z-index: 0;
+         transform: translate(var(--px,0), var(--py,0)); transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  .orb.a { width: 420px; height: 420px; background: #00d4ff; top: -130px; left: -110px; animation: float1 14s ease-in-out infinite; }
+  .orb.b { width: 340px; height: 340px; background: #0a6ed1; bottom: -120px; right: -90px; animation: float2 18s ease-in-out infinite; }
+  .orb.c { width: 260px; height: 260px; background: #00ffa8; top: 40%; left: 60%; opacity:.18; animation: float1 20s ease-in-out infinite; }
+  @keyframes float1 { 0%,100%{ transform: translate(var(--px,0),var(--py,0)) } 50%{ transform: translate(calc(var(--px,0) + 40px), calc(var(--py,0) + 30px)) } }
+  @keyframes float2 { 0%,100%{ transform: translate(var(--px,0),var(--py,0)) } 50%{ transform: translate(calc(var(--px,0) - 30px), calc(var(--py,0) - 40px)) } }
+
+  .wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 64px 40px 90px; }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal { opacity: 0; transform: translateY(38px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.85,.25,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  .reveal.left  { transform: translateX(-50px); }
+  .reveal.right { transform: translateX(50px); }
+  .reveal.left.in, .reveal.right.in { transform: none; }
+  .reveal.zoom { transform: scale(.86); }
+  .reveal.zoom.in { transform: none; }
+
+  /* ===== HERO ===== */
+  .hero { text-align: center; padding: 26px 0 10px; }
+  .logo {
+    width: 104px; height: 104px; border-radius: 28px; margin: 0 auto 26px;
+    display: block;
+    box-shadow: 0 0 0 1px rgba(0,212,255,.3), 0 0 50px 8px rgba(0,212,255,.4);
+    animation: logoIn 1s cubic-bezier(.2,1.2,.3,1) both, pulse 3s ease-in-out 1s infinite;
+  }
+  @keyframes logoIn { from{ opacity:0; transform: scale(.4) rotate(-20deg) } to{ opacity:1; transform: scale(1) rotate(0) } }
+  @keyframes pulse { 0%,100%{ box-shadow: 0 0 0 1px rgba(0,212,255,.3), 0 0 40px 6px rgba(0,212,255,.35) } 50%{ box-shadow: 0 0 0 1px rgba(0,212,255,.5), 0 0 80px 16px rgba(0,212,255,.6) } }
+  .badge {
+    display: inline-block; font-size: 13px; letter-spacing: 3px; font-weight: 700;
+    color: var(--cyan); text-transform: uppercase;
+    border: 1px solid rgba(0,212,255,.35); border-radius: 100px;
+    padding: 7px 18px; margin-bottom: 22px;
+    background: rgba(0,212,255,.06);
+    animation: fadeUp .7s ease .2s both;
+  }
+  .hero h1 {
+    font-size: 60px; font-weight: 800; letter-spacing: -1.2px; line-height: 1.12;
+  }
+  .hero h1 .word { display: inline-block; animation: wordUp .8s cubic-bezier(.2,.9,.25,1) both; }
+  .hero h1 .grad {
+    background: linear-gradient(100deg, #ffffff 20%, var(--cyan) 50%, #ffffff 80%);
+    background-size: 220% auto;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: wordUp .8s cubic-bezier(.2,.9,.25,1) both, shimmer 5s linear 1s infinite;
+  }
+  @keyframes shimmer { to { background-position: 220% center; } }
+  @keyframes wordUp { from{ opacity:0; transform: translateY(26px) } to{ opacity:1; transform: none } }
+  @keyframes fadeUp { from{ opacity:0; transform: translateY(16px) } to{ opacity:1; transform: none } }
+  .hero .project-title {
+    margin-top: 20px; font-size: 17px; font-weight: 600; color: #9fd9f5; letter-spacing: .2px;
+    animation: fadeUp .7s ease .9s both;
+  }
+  .hero .tagline { margin-top: 22px; font-size: 22px; font-weight: 500; color: #bfe9ff; line-height: 1.5; animation: fadeUp .7s ease 1.05s both; }
+  .hero .tagline b { color: var(--cyan); font-weight: 700; }
+  .hero .sub { margin-top: 16px; font-size: 16px; color: rgba(234,246,255,.6); line-height: 1.7; max-width: 640px; margin: 16px auto 0; animation: fadeUp .7s ease 1.2s both; }
+  .scroll-cue {
+    margin-top: 40px; font-size: 13px; letter-spacing: 2px; color: rgba(234,246,255,.45); text-transform: uppercase;
+    animation: fadeUp .7s ease 1.5s both;
+  }
+  .scroll-cue .chev { display:block; font-size: 22px; color: var(--cyan); margin-top: 6px; animation: bob 1.6s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{ transform: translateY(0); opacity:.6 } 50%{ transform: translateY(8px); opacity:1 } }
+
+  /* ===== LIVE PRODUCT PREVIEW (animated mockup) ===== */
+  .preview { margin-top: 80px; }
+  .browser {
+    max-width: 760px; margin: 0 auto; border-radius: 16px; overflow: hidden;
+    background: #0a1326; border: 1px solid rgba(0,212,255,.22);
+    box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 50px rgba(0,212,255,.12);
+  }
+  .browser .bar { display:flex; align-items:center; gap:8px; padding:11px 14px; background:#0c1730; border-bottom:1px solid rgba(255,255,255,.06); }
+  .browser .bar .d { width:11px; height:11px; border-radius:50%; }
+  .browser .bar .d.r{background:#ff5f57}.browser .bar .d.y{background:#febc2e}.browser .bar .d.g{background:#28c840}
+  .browser .bar .url { margin-left:12px; flex:1; background:#060d1d; border-radius:7px; padding:6px 12px; font-size:12px; color:rgba(234,246,255,.5); }
+  .browser .page { position: relative; height: 320px; padding: 22px; background:
+    radial-gradient(600px 300px at 30% 0%, rgba(0,212,255,.05), transparent 60%), #f4f6fb; }
+  /* fake messy site rows */
+  .row { height: 30px; border-radius: 7px; background: #e2e6ef; margin-bottom: 12px; }
+  .row.short { width: 55%; }
+  .row.menu { display:flex; gap:10px; background:transparent; height:auto; margin-bottom:18px; }
+  .row.menu .m { flex:1; height:34px; border-radius:8px; background:#dfe4ee; position: relative; }
+  /* the highlighted target */
+  .target {
+    outline: 3px solid var(--cyan); outline-offset: 3px; border-radius:8px;
+    box-shadow: 0 0 0 6px rgba(0,212,255,.25), 0 0 24px 8px rgba(0,212,255,.55);
+    background:#cfe9ff !important;
+    animation: tglow 1.5s ease-in-out infinite;
+  }
+  @keyframes tglow { 0%,100%{ box-shadow:0 0 0 6px rgba(0,212,255,.25),0 0 20px 6px rgba(0,212,255,.5) } 50%{ box-shadow:0 0 0 8px rgba(0,212,255,.35),0 0 34px 12px rgba(0,212,255,.8) } }
+  .p-arrow { position:absolute; font-size:26px; filter: drop-shadow(0 0 6px var(--cyan)); animation: arr 0.9s ease-in-out infinite; }
+  @keyframes arr { 0%,100%{ transform: translateX(0) } 50%{ transform: translateX(-7px) } }
+  .p-tip {
+    position:absolute; z-index:5; background: linear-gradient(135deg, #050510f2, #07142cf2);
+    border:1px solid rgba(0,212,255,.45); border-radius:12px; padding:11px 15px; max-width:230px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+  }
+  .p-tip .s { font-size:9px; font-weight:800; letter-spacing:1.4px; color:var(--cyan); text-transform:uppercase; }
+  .p-tip .m { font-size:13px; color:#dff0ff; margin-top:5px; line-height:1.5; }
+  /* guide widget pill */
+  .p-widget {
+    position:absolute; bottom:16px; left:50%; transform: translateX(-50%);
+    display:flex; align-items:center; gap:10px; min-width:330px;
+    background: linear-gradient(135deg,#050510f7,#07142cf7); border:1px solid rgba(0,212,255,.4);
+    border-radius:40px; padding:9px 14px; box-shadow:0 8px 30px rgba(0,0,0,.5),0 0 20px rgba(0,212,255,.15);
+  }
+  .p-widget .wi{ color:var(--cyan); font-size:15px; }
+  .p-widget .wt{ flex:1; font-size:13.5px; color:#cfeaff; }
+  .p-widget .wm{ width:30px;height:30px;border-radius:50%;background:rgba(0,212,255,.12);border:1px solid rgba(0,212,255,.35);display:flex;align-items:center;justify-content:center;font-size:14px; }
+  .p-widget .wb{ background:linear-gradient(135deg,#006e8c,#00d4ff);border-radius:20px;padding:6px 15px;color:#00060e;font-weight:800;font-size:12.5px; }
+  /* arrival banner */
+  .p-arrival {
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(.9); opacity:0;
+    background:linear-gradient(135deg,#008a4a,#00b96a); border-radius:100px; padding:16px 44px;
+    color:#fff; font-size:22px; font-weight:800; display:flex; align-items:center; gap:10px;
+    box-shadow:0 0 60px 16px rgba(0,255,160,.45); z-index:8; transition:.4s cubic-bezier(.2,1,.3,1);
+  }
+  .p-arrival.show{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .caption { text-align:center; margin-top:20px; font-size:14px; color:rgba(234,246,255,.5); }
+
+  /* ===== SECTION LABEL ===== */
+  .section-label { text-align:center; font-size:13px; letter-spacing:3px; font-weight:700; color:var(--cyan); text-transform:uppercase; margin-bottom:30px; }
+
+  /* ===== WHO IT'S FOR ===== */
+  .when { margin-top: 110px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .when .card {
+    background: linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border:1px solid rgba(0,212,255,.16); border-radius:18px; padding:30px 24px;
+    transition: transform .25s, border-color .25s, box-shadow .25s;
+  }
+  .when .card:hover { transform: translateY(-8px); border-color: rgba(0,212,255,.5); box-shadow:0 18px 40px rgba(0,0,0,.4),0 0 26px rgba(0,212,255,.15); }
+  .when .card .emoji { font-size:36px; display:inline-block; transition: transform .25s; }
+  .when .card:hover .emoji { transform: scale(1.18) rotate(-6deg); }
+  .when .card h3 { margin-top:14px; font-size:18px; font-weight:700; }
+  .when .card p { margin-top:8px; font-size:14px; line-height:1.65; color:rgba(234,246,255,.6); }
+
+  /* ===== FLOW ===== */
+  .flow { margin-top: 110px; }
+  .flow-row { display:flex; align-items:stretch; justify-content:center; flex-wrap:wrap; }
+  .flow-step {
+    flex:1; min-width:150px;
+    background: linear-gradient(160deg, rgba(0,212,255,.08), rgba(0,212,255,.02));
+    border:1px solid rgba(0,212,255,.22); border-radius:16px; padding:24px 16px; text-align:center;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .flow-step:hover { transform: translateY(-6px); box-shadow:0 0 26px rgba(0,212,255,.2); }
+  .flow-step .n { width:32px; height:32px; border-radius:50%; margin:0 auto 12px; background:var(--cyan); color:#04040e; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 16px rgba(0,212,255,.6); }
+  .flow-step .t { font-size:15px; font-weight:700; }
+  .flow-step .d { margin-top:5px; font-size:12px; color:rgba(234,246,255,.55); line-height:1.5; }
+  .flow-arrow { display:flex; align-items:center; color:var(--cyan); font-size:22px; padding:0 6px; }
+
+  /* ===== FEATURES ===== */
+  .features { margin-top: 110px; display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  .feat { display:flex; gap:16px; align-items:flex-start; background:rgba(255,255,255,.03); border:1px solid rgba(0,212,255,.14); border-radius:16px; padding:24px; transition: transform .25s, border-color .25s; }
+  .feat:hover { transform: translateY(-5px); border-color: rgba(0,212,255,.4); }
+  .feat .ic { width:48px; height:48px; flex-shrink:0; border-radius:12px; background:rgba(0,212,255,.12); border:1px solid rgba(0,212,255,.3); display:flex; align-items:center; justify-content:center; font-size:22px; }
+  .feat h4 { font-size:16px; font-weight:700; }
+  .feat p { margin-top:5px; font-size:13.5px; line-height:1.6; color:rgba(234,246,255,.6); }
+
+  /* ===== STORY ===== */
+  .story { margin-top: 130px; }
+  .story-intro { display:flex; align-items:center; gap:34px; max-width:820px; margin:0 auto 50px; }
+  .sunja-wrap {
+    flex-shrink:0; width:170px; height:170px; border-radius:50%; position:relative;
+    background: radial-gradient(circle at 50% 40%, rgba(0,212,255,.18), rgba(0,212,255,.03) 70%);
+    border:1px solid rgba(0,212,255,.3); display:flex; align-items:flex-end; justify-content:center;
+    box-shadow:0 0 50px rgba(0,212,255,.2);
+  }
+  .sunja-wrap::after { content:""; position:absolute; inset:-6px; border-radius:50%; border:1px dashed rgba(0,212,255,.3); animation: spin 18s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .sunja-img { width:150px; height:150px; object-fit:contain; filter: drop-shadow(0 8px 14px rgba(0,0,0,.4)); animation: sway 3.4s ease-in-out infinite; }
+  .sunja-fallback { font-size:96px; line-height:170px; animation: sway 3.4s ease-in-out infinite; }
+  @keyframes sway { 0%,100%{ transform: translateY(0) rotate(-1.5deg) } 50%{ transform: translateY(-7px) rotate(1.5deg) } }
+  .story-intro .txt .meet { font-size:30px; font-weight:800; letter-spacing:-.5px; }
+  .story-intro .txt .meet b { color: var(--cyan); }
+  .story-intro .txt p { margin-top:14px; font-size:16px; line-height:1.75; color:rgba(234,246,255,.65); }
+
+  .chapters { display:flex; align-items:stretch; flex-wrap:wrap; justify-content:center; gap:0; }
+  .chapter { flex:1; min-width:280px; background: linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.02)); border:1px solid rgba(0,212,255,.2); border-radius:20px; padding:30px 28px; position:relative; transition: transform .25s, box-shadow .25s; }
+  .chapter:hover { transform: translateY(-6px); box-shadow:0 20px 46px rgba(0,0,0,.4),0 0 30px rgba(0,212,255,.15); }
+  .chapter .ch-tag { display:inline-block; font-size:11px; letter-spacing:1.5px; font-weight:800; color:#04040e; background:var(--cyan); border-radius:100px; padding:4px 12px; text-transform:uppercase; }
+  .chapter .ch-site { margin-top:16px; font-size:20px; font-weight:800; display:flex; align-items:center; gap:9px; }
+  .chapter .ch-body { margin-top:14px; font-size:14.5px; line-height:1.8; color:rgba(234,246,255,.72); }
+  .chapter .ch-quote { margin-top:16px; padding:12px 16px; border-left:3px solid var(--cyan); background:rgba(0,212,255,.07); border-radius:0 10px 10px 0; font-size:14.5px; font-style:italic; color:#cdeeff; }
+  .connector { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0 14px; min-width:132px; gap:12px; }
+  .connector .big-arrow { font-size:24px; color:#04040e; width:52px; height:52px; border-radius:50%; background:var(--cyan); display:flex; align-items:center; justify-content:center; box-shadow:0 0 24px rgba(0,212,255,.6); animation: arr 1s ease-in-out infinite; }
+  .connector .line { font-size:12.5px; letter-spacing:.3px; color:var(--cyan); font-weight:700; text-align:center; line-height:1.45; max-width:120px; }
+  .story-close { margin-top:44px; text-align:center; font-size:20px; font-weight:700; line-height:1.5; }
+  .story-close b { color: var(--cyan); }
+
+  /* ===== FOOTER ===== */
+  .footer { margin-top:100px; text-align:center; padding-top:30px; border-top:1px solid rgba(0,212,255,.15); font-size:14px; color:rgba(234,246,255,.5); }
+  .footer .stack { margin-top:10px; font-size:13px; color:rgba(234,246,255,.4); }
+  .footer .stack b { color: var(--cyan); font-weight:600; }
+
+  @media (max-width: 820px) {
+    .hero h1 { font-size: 38px; }
+    .when, .features { grid-template-columns: 1fr; }
+    .connector { padding: 22px 0; min-width: 0; }
+    .connector .big-arrow { transform: rotate(90deg); }
+    .story-intro { flex-direction: column; text-align:center; }
+    .browser .page { height: 280px; }
+  }
+</style>
+</head>
+<body>
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+  <div class="orb c"></div>
+
+  <div class="wrap">
+
+    <!-- HERO -->
+    <div class="hero">
+      <img class="logo" src="icon128.png" alt="Logo" />
+      <div class="badge">Team Ieum</div>
+      <h1>
+        <span class="word" style="animation-delay:.35s">Never</span>
+        <span class="word" style="animation-delay:.45s">get</span>
+        <span class="word grad" style="animation-delay:.55s">lost</span><br/>
+        <span class="word" style="animation-delay:.7s">on</span>
+        <span class="word" style="animation-delay:.78s">a</span>
+        <span class="word" style="animation-delay:.86s">website</span>
+        <span class="word" style="animation-delay:.94s">again.</span>
+      </h1>
+      <div class="project-title">Designing a Senior-Friendly Digital Guide for Web &amp; App</div>
+      <div class="tagline">Complex websites, <b>guided one step at a time</b> by AI.</div>
+      <div class="sub">"Where would you like to go?" — just say your destination, and the guide highlights exactly which button to click, step by step, until you arrive.</div>
+      <div class="scroll-cue">Scroll<span class="chev">⌄</span></div>
+    </div>
+
+    <!-- LIVE PRODUCT PREVIEW -->
+    <div class="preview reveal zoom">
+      <div class="browser">
+        <div class="bar">
+          <span class="d r"></span><span class="d y"></span><span class="d g"></span>
+          <span class="url">🔒 www.complex-gov-site.go.kr</span>
+        </div>
+        <div class="page" id="pvPage">
+          <div class="row menu">
+            <div class="m" id="t1"></div><div class="m"></div><div class="m"></div><div class="m"></div>
+          </div>
+          <div class="row"></div>
+          <div class="row short"></div>
+          <div class="row menu">
+            <div class="m"></div><div class="m" id="t2"></div><div class="m"></div>
+          </div>
+          <div class="row short"></div>
+          <div class="row" id="t3"></div>
+
+          <div class="p-tip" id="pvTip"><div class="s">Step 1 / 3</div><div class="m">Click here to log in 👆</div></div>
+          <div class="p-arrow" id="pvArrow">👈</div>
+
+          <div class="p-arrival" id="pvArrival"><span>✓</span><span>Arrived!</span></div>
+
+          <div class="p-widget">
+            <span class="wi">✦</span>
+            <span class="wt" id="pvType">Where would you like to go?</span>
+            <span class="wm">🎤</span>
+            <span class="wb">Guide</span>
+          </div>
+        </div>
+      </div>
+      <div class="caption">↑ A live look at the guide in action — it lights up each button until you arrive.</div>
+    </div>
+
+    <!-- WHO IT'S FOR -->
+    <div class="section-label reveal" style="margin-top:110px">Who it's for</div>
+    <div class="when">
+      <div class="card reveal" style="transition-delay:.05s"><div class="emoji">👵</div><h3>Seniors new to the web</h3><p>When the maze of menus on banking or government sites feels impossible to navigate.</p></div>
+      <div class="card reveal" style="transition-delay:.18s"><div class="emoji">🧭</div><h3>First-time visitors</h3><p>Too many menus to find what you need? Just name your destination and follow along.</p></div>
+      <div class="card reveal" style="transition-delay:.31s"><div class="emoji">🎤</div><h3>Anyone who finds typing hard</h3><p>Speak instead of type — "I want to pay my bill" is all it takes to start.</p></div>
+    </div>
+
+    <!-- FLOW -->
+    <div class="flow">
+      <div class="section-label reveal">How it works</div>
+      <div class="flow-row">
+        <div class="flow-step reveal" style="transition-delay:.05s"><div class="n">1</div><div class="t">Say your goal</div><div class="d">by voice or text</div></div>
+        <div class="flow-arrow reveal" style="transition-delay:.15s">→</div>
+        <div class="flow-step reveal" style="transition-delay:.2s"><div class="n">2</div><div class="t">Scan the page</div><div class="d">crawl the live DOM</div></div>
+        <div class="flow-arrow reveal" style="transition-delay:.3s">→</div>
+        <div class="flow-step reveal" style="transition-delay:.35s"><div class="n">3</div><div class="t">AI plans the path</div><div class="d">Gemini maps the clicks</div></div>
+        <div class="flow-arrow reveal" style="transition-delay:.45s">→</div>
+        <div class="flow-step reveal" style="transition-delay:.5s"><div class="n">4</div><div class="t">Guide step by step</div><div class="d">highlight → arrive</div></div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section-label reveal" style="margin-top:110px">What makes it work</div>
+    <div class="features">
+      <div class="feat reveal left"  style="transition-delay:.05s"><div class="ic">🎯</div><div><h4>AI click-path guidance</h4><p>Name a destination and each button to press is highlighted in order, with a 👈 arrow pointing the way.</p></div></div>
+      <div class="feat reveal right" style="transition-delay:.05s"><div class="ic">🎤</div><div><h4>Korean voice input</h4><p>No typing required — just speak your goal out loud and the guide begins instantly.</p></div></div>
+      <div class="feat reveal left"  style="transition-delay:.18s"><div class="ic">🔄</div><div><h4>Works on dynamic &amp; static sites</h4><p>Menus that expand, pages that navigate away — the guide keeps following along automatically.</p></div></div>
+      <div class="feat reveal right" style="transition-delay:.18s"><div class="ic">✓</div><div><h4>Clear arrival cues</h4><p>A large, high-contrast banner and a progress roadmap so it's easy to see — even for those who struggle with screens.</p></div></div>
+    </div>
+
+    <!-- STORY -->
+    <div class="story">
+      <div class="section-label reveal">A day with the guide</div>
+
+      <div class="story-intro reveal">
+        <div class="sunja-wrap">
+          <svg class="sunja-img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="150" height="150" role="img" aria-label="Sunja">
+            <g fill="#FFFFFF">
+              <circle cx="120" cy="40" r="16" />
+              <circle cx="111" cy="27" r="7" />
+              <path d="M 108 55 C 90 55, 75 70, 75 90 C 60 100, 50 120, 50 140 A 10 10 0 0 0 60 150 L 102 150 A 10 10 0 0 0 112 140 C 112 120, 105 105, 115 95 L 135 95 A 6 6 0 0 0 141 89 L 115 67 C 113 60, 112 55, 108 55 Z" />
+              <path d="M 115 67 L 145 83 A 5 5 0 0 1 147 92 L 143 92 A 2 2 0 0 1 141 90 L 135 85 Z" />
+              <path d="M 144 86 A 4 4 0 0 1 151 90 L 151 170 A 1.5 1.5 0 0 1 148 170 L 148 93 A 1 1 0 0 1 147 92 L 144 92 Z" />
+              <path d="M 94 150 L 94 165 A 5 5 0 0 0 104 165 L 104 150 Z" />
+              <path d="M 67 150 C 62 155, 53 162, 53 166 A 5 5 0 0 0 62 171 C 67 166, 75 156, 76 150 Z" />
+            </g>
+          </svg>
+        </div>
+        <div class="txt">
+          <div class="meet">Meet <b>Sunja</b>, 72.</div>
+          <p>She lives alone and finds today's websites overwhelming — tiny menus, endless tabs, and words she doesn't recognize. Here's how one ordinary morning goes with the guide by her side.</p>
+        </div>
+      </div>
+
+      <div class="chapters">
+        <div class="chapter reveal left">
+          <span class="ch-tag">Question 1</span>
+          <div class="ch-site">🏛️ National Tax Service</div>
+          <div class="ch-body">Sunja recently sold her home, and one worry keeps nagging at her: <b>does she owe capital gains tax?</b> She opens the guide on the National Tax Service site to find out.</div>
+          <div class="ch-quote">"Am I subject to capital gains tax?"</div>
+          <div class="ch-body">Step by step, the guide leads her to the right page — where she learns the sale can be <b style="color:#7fe9b0">tax-exempt</b>, but only if her home meets certain conditions.</div>
+        </div>
+
+        <div class="connector reveal zoom">
+          <span class="big-arrow">➜</span>
+          <span class="line">but does she qualify?</span>
+        </div>
+
+        <div class="chapter reveal right">
+          <span class="ch-tag">Question 2</span>
+          <div class="ch-site">📄 Internet Registry Office</div>
+          <div class="ch-body">To check whether she meets those exemption conditions, Sunja needs her official property records. So she opens the same guide again — this time on the Internet Registry Office.</div>
+          <div class="ch-quote">"I need to issue my property register."</div>
+          <div class="ch-body">From search → select property → issue, the guide walks her through getting her <b>property register (등기부등본)</b> — the very document her exemption depends on.</div>
+        </div>
+      </div>
+
+      <div class="story-close reveal">
+        One guide. Every website.<br/>
+        From a <b>tax question</b> to the <b>document that answers it</b> — Sunja followed one thread, and never got lost.
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer reveal">
+      Making the complex web easy for everyone — <b>Team Ieum</b>
+      <div class="stack">Chrome Extension (MV3) · <b>Google Gemini 2.5 Flash</b> · Web Speech API</div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ---- scroll reveal ---- */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    /* ---- mouse parallax on orbs ---- */
+    const orbs = document.querySelectorAll('.orb');
+    window.addEventListener('mousemove', (ev) => {
+      const cx = (ev.clientX / window.innerWidth - .5);
+      const cy = (ev.clientY / window.innerHeight - .5);
+      orbs.forEach((o, i) => {
+        const depth = (i + 1) * 16;
+        o.style.setProperty('--px', (cx * depth) + 'px');
+        o.style.setProperty('--py', (cy * depth) + 'px');
+      });
+    });
+
+    /* ---- live product preview loop ---- */
+    const steps = [
+      { el: 't1', tip: 'Click here to log in 👆',     label: 'Step 1 / 3' },
+      { el: 't2', tip: 'Now open "My Tax" 👆',         label: 'Step 2 / 3' },
+      { el: 't3', tip: 'Tap "Refund Lookup" 👆',       label: 'Step 3 / 3' },
+    ];
+    const tip = document.getElementById('pvTip');
+    const arrow = document.getElementById('pvArrow');
+    const arrival = document.getElementById('pvArrival');
+    const typeEl = document.getElementById('pvType');
+    let si = 0;
+
+    function placeFor(el) {
+      const page = document.getElementById('pvPage');
+      const pr = page.getBoundingClientRect();
+      const tr = el.getBoundingClientRect();
+      const x = tr.left - pr.left, y = tr.top - pr.top;
+      el.classList.add('target');
+      arrow.style.left = (x + tr.width + 2) + 'px';
+      arrow.style.top  = (y + tr.height/2 - 13) + 'px';
+      arrow.style.display = 'block';
+      tip.style.left = Math.min(x, pr.width - 250) + 'px';
+      tip.style.top  = Math.max(4, y - tip.offsetHeight - 14) + 'px';
+      tip.style.display = 'block';
+    }
+    function clearAll() {
+      steps.forEach(s => document.getElementById(s.el).classList.remove('target'));
+    }
+    function cycle() {
+      clearAll();
+      arrival.classList.remove('show');
+      if (si < steps.length) {
+        const s = steps[si];
+        tip.querySelector('.s').textContent = s.label;
+        tip.querySelector('.m').textContent = s.tip;
+        placeFor(document.getElementById(s.el));
+        si++;
+        setTimeout(cycle, 1900);
+      } else {
+        clearAll();
+        tip.style.display = 'none';
+        arrow.style.display = 'none';
+        arrival.classList.add('show');
+        si = 0;
+        setTimeout(cycle, 2200);
+      }
+    }
+    // kick off once the preview scrolls into view
+    const pv = document.querySelector('.preview');
+    const pvIO = new IntersectionObserver((es) => {
+      es.forEach(e => { if (e.isIntersecting) { setTimeout(cycle, 700); pvIO.disconnect(); } });
+    }, { threshold: 0.3 });
+    pvIO.observe(pv);
+  </script>
+</body>
+</html>

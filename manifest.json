@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Next UI - AI Assistant",
+  "name": "Ieum - 웹 길안내 도우미",
   "version": "1.0",
-  "description": "AI 기반 웹 UI 가이드",
+  "description": "AI가 클릭 경로를 단계별로 안내하는 웹 길안내 도우미",
   "permissions": [
     "storage",
     "activeTab",

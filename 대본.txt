@@ -1,0 +1,95 @@
+==================================================================
+ Ieum 시연영상 — 대본 (어느 화면에서 무슨 말)
+==================================================================
+ - 아래 영어 문장이 실제로 말할 나레이션입니다.
+ - 🎤 표시는 시연 중 익스텐션 마이크에 말하는 한국어입니다.
+==================================================================
+
+
+[화면 1] landing.html
+
+ 1-A) 맨 위 타이틀
+   "Hi everyone. Have you ever opened a website and had no idea
+    where to click? For people who didn't grow up online, that
+    feeling happens every single day. We're Team Ieum, and we
+    built a digital guide that walks them through it."
+
+ 1-B) 라이브 프리뷰
+   "Here's the idea. You just say where you want to go - by typing,
+    or by voice - and the AI reads the page, finds the path, and
+    lights up exactly which button to press, one step at a time,
+    until you arrive."
+
+ 1-C) How it works (4단계)
+   "Behind the scenes it's four steps: it reads the live page,
+    the AI maps out the clicks, and it guides you through them -
+    so it works on almost any website, even ones that change as
+    you click."
+
+ 1-D) Meet Sunja (스토리)
+   "Let me show you with a real situation. This is Sunja,
+    seventy-two. She just sold the apartment she lived in for
+    years, and now she's worried about one thing: will she have
+    to pay a big capital gains tax on that sale? She doesn't even
+    know who to ask. Watch how the guide helps her figure it out
+    - across two different government websites."
+
+
+[화면 2] demo_store.html
+
+   "But first - how does Sunja get it? It's simple. On the Chrome
+    Web Store, she just clicks 'Add to Chrome.'"
+
+
+[화면 3] install.html
+
+   "She confirms, pins it to the toolbar, and enters the key once.
+    About thirty seconds later, the Ieum icon is sitting right
+    there, ready on any website she visits."
+
+
+[화면 4] 국세청 (실제 사이트) — 시연 ①
+
+   "Her first stop is the National Tax Service - the office that
+    would actually know. But the site is buried in menus and tax
+    words she's never seen. So she just clicks the Ieum icon and
+    asks, in plain language -"
+
+       🎤  "양도소득세 대상인가요?"
+
+   "The guide lights up each button and walks her straight to the
+    answer. And the answer is good news: because this was her only
+    home, the sale CAN be exempt from capital gains tax - but only
+    if she owned it long enough. So now there's one thing she has
+    to prove: how long she's actually owned the place."
+
+
+[화면 5] 인터넷 등기소 (실제 사이트) — 시연 ②
+
+   "That proof - the date she bought the home - lives on a totally
+    different website: the Internet Registry Office. The document
+    she needs is her property register, and she's never used this
+    site in her life. So she opens the same guide again, and says -"
+
+       🎤  "등기부등본을 떼고 싶어요"
+
+   "And just like before, step by step, it walks her through
+    searching her address, choosing her home, and issuing the
+    document - the one piece of paper that proves she qualifies
+    for the tax exemption."
+
+
+[화면 6] landing.html (맨 위) — 맺음말
+
+   "One question led to another, across two sites Sunja had never
+    understood - and the same guide carried her through both,
+    without ever getting lost. That's Ieum: making the complex web
+    easy for everyone. Thank you."
+
+
+==================================================================
+ 시연 중 마이크에 말할 한국어 (정리)
+==================================================================
+   국세청:   "양도소득세 대상인가요?"
+   등기소:   "등기부등본을 떼고 싶어요"
+==================================================================
