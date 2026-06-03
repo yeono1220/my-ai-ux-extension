@@ -19,7 +19,12 @@ const WIDGET_DRAFT_KEY = 'nextui_widget_draft';  // 입력 중이던 텍스트
 // 페이지가 바뀔 때마다 현재 페이지를 다시 분석해 다음 클릭을 재계획한다.
 const GOAL_KEY  = 'nextui_goal';                 // { goal: string, ts: number }
 const GOAL_TTL  = 10 * 60 * 1000;                // 목표 유효시간 10분
-let goalReplans = 0;                             // 같은 페이지 연속 재계획 횟수 (무한루프 방지)
+// 매 동작마다 DOM을 다시 읽어 "다음 한 동작"만 계획하는 observe→act 루프를 쓴다.
+// 무한루프 방지: "같은 동작"이 연속으로 반복되면(진전 없음) 멈춘다.
+let lastActionKey   = '';
+let sameActionCount = 0;
+function actionKey(s) { return `${s?.action || 'click'}|${s?.selector || ''}|${s?.value || ''}`; }
+function resetActionGuard() { lastActionKey = ''; sameActionCount = 0; }
 
 
 // ══════════════════════════════════════════════════════════════
@@ -40,7 +45,7 @@ function getAllElements() {
   ].join(',');
 
   const seen = new Set();
-  return Array.from(document.querySelectorAll(sel))
+  const items = Array.from(document.querySelectorAll(sel))
     .map((el, i) => {
       const tag  = el.tagName.toLowerCase();
       // 입력/선택 가능한 폼 필드인지 (AI가 type/select 액션 대상으로 고를 수 있게)
@@ -68,7 +73,14 @@ function getAllElements() {
       if (tag === 'select') obj.options = getSelectOptions(el);  // 선택지 목록
       return obj;
     })
-    .filter(Boolean).slice(0, 200);
+    .filter(Boolean);
+
+  // ★ 화면에 "보이는" 요소를 앞으로 정렬한 뒤 자른다.
+  //   (홈택스처럼 숨김 메가메뉴 링크가 수백 개면, 문서 순서로 자르면
+  //    정작 보이는 검색 결과가 잘려서 AI가 못 보던 문제 해결)
+  //   보이는 것끼리는 원래 순서 유지(안정 정렬).
+  items.sort((a, b) => (b.isVisible === true ? 1 : 0) - (a.isVisible === true ? 1 : 0));
+  return items.slice(0, 250);
 }
 
 function getElText(el) {
@@ -104,6 +116,22 @@ function getSelectOptions(el) {
     return Array.from(el.options || []).map(o => (o.textContent || o.value || '').trim())
       .filter(Boolean).slice(0, 30);
   } catch { return []; }
+}
+
+// 입력칸 근처에 "조회/검색/찾기/선택" 버튼이 있으면 반환 (= 팝업으로 채우는 lookup 필드)
+function findNearbyLookupButton(el) {
+  try {
+    const re = /조회|검색|찾기|선택/;
+    const scope = (el.closest && el.closest('td,th,tr,li,dd,.form-group,div,p')) || el.parentElement;
+    if (!scope) return null;
+    const cands = Array.from(scope.querySelectorAll('button,a,input[type="button"],input[type="submit"],[role="button"]'));
+    for (const b of cands) {
+      const t = (b.textContent || b.value || '').trim();
+      const r = b.getBoundingClientRect();
+      if (t && re.test(t) && r.width > 0 && r.height > 0) return b;
+    }
+  } catch {}
+  return null;
 }
 
 function getUniqueSelector(el) {
@@ -397,8 +425,12 @@ async function runStep(idx) {
   if (!guide.active) return;
   if (!target) {
     console.warn('[NUI] 타겟 못 찾음 (5s 대기 후):', step.text);
-    // 못 찾으면(페이지 변동 등) 같은 페이지에서 목표 기준 재계획
-    replanSamePage();
+    // 못 찾은 타겟을 기록해 다음 재계획 때 AI에게 피드백 → "그건 없으니 다른 걸 골라라"
+    chrome.storage.local.get(GOAL_KEY, (d) => {
+      const g = d?.[GOAL_KEY];
+      if (g) chrome.storage.local.set({ [GOAL_KEY]: { ...g, lastMiss: step.text || step.value || step.selector || '' } });
+      replanSamePage();
+    });
     return;
   }
 
@@ -408,9 +440,14 @@ async function runStep(idx) {
   if (step.action === 'type' || step.action === 'fill' || step.action === 'select') {
     const term = step.value || '';
     const isSelect = target.tagName === 'SELECT';
+    // 근처에 "조회/검색/찾기/선택" 버튼이 있으면 = 직접 입력이 아니라 팝업으로 선택하는 필드
+    const lookupBtn = findNearbyLookupButton(target);
+    const lookupName = lookupBtn ? (lookupBtn.textContent || lookupBtn.value || '조회').trim() : '';
     const defMsg = isSelect
       ? (term ? `'${term}' 을(를) 선택하세요` : '항목을 선택하세요')
-      : (term ? `'${term}' 라고 입력하세요`   : '내용을 입력하세요');
+      : (lookupName
+          ? (term ? `'${term}' 입력 후 옆의 '${lookupName}' 버튼으로 선택하세요` : `옆의 '${lookupName}' 버튼으로 선택하세요`)
+          : (term ? `'${term}' 라고 입력하세요` : '내용을 입력하세요'));
     highlightTarget(target, step.message || defMsg, idx + 1, guide.sequence.length);
     try { target.focus(); } catch {}
 
@@ -429,15 +466,22 @@ async function runStep(idx) {
       if (guide.cleanup) { guide.cleanup(); guide.cleanup = null; }
       clearHighlight();
       const nextIdx = idx + 1;
-      if (nextIdx < guide.sequence.length) { goalReplans = 0; runStep(nextIdx); }
+      if (nextIdx < guide.sequence.length) { resetActionGuard(); runStep(nextIdx); }
       else { replanSamePage(); }
     };
 
-    const check = () => {
+    // 타이핑 중(input): 기대값이 다 들어왔을 때만 진행
+    const checkTyping = () => {
       if (!guide.active) return;
       const cur = currentVal();
-      const matched = expect ? cur.includes(expect) : cur.length > 0;
-      if (matched) goNext();          // 기대값을 다 입력/선택함 → 다음 단계 안내
+      if (expect ? cur.includes(expect) : cur.length > 0) goNext();
+    };
+    // 값 확정(change): 드롭다운 선택, "조회" 팝업으로 채움, blur 등으로 값이 확정된 경우.
+    // 이때는 기대 텍스트와 정확히 안 맞아도(예: "손주"로 안내했는데 조회로 "외손주(직계비속)"가
+    // 채워짐) "비어있지 않으면" 다음으로 진행한다 → 조회형 필드에서 안 넘어가던 문제 해결.
+    const checkCommitted = () => {
+      if (!guide.active) return;
+      if (currentVal().length > 0) goNext();
     };
     const onKey = (e) => {
       if (e.key !== 'Enter') return;  // 엔터로 바로 진행 (검색 제출 등)
@@ -446,12 +490,26 @@ async function runStep(idx) {
       advanceAfterAction(idx);
     };
 
-    target.addEventListener('input',  check);
-    target.addEventListener('change', check);
+    // 안전장치(settle 폴링): 조회 팝업이 이벤트 없이 값을 꽂거나, change가 안 뜨는
+    // 필드라도, "값이 (처음과 달라져) 채워지고 잠시 멈추면" 다음으로 진행 → 영영 멈춤 방지.
+    const initialVal = currentVal();
+    let lastTs = Date.now();
+    const mark = () => { lastTs = Date.now(); };
+    const onInput  = () => { mark(); checkTyping(); };
+    const onChange = () => { mark(); checkCommitted(); };
+    const poll = setInterval(() => {
+      if (!guide.active) return;
+      const cur = currentVal();
+      if (cur.length > 0 && cur !== initialVal && (Date.now() - lastTs) > 2000) goNext();
+    }, 600);
+
+    target.addEventListener('input',  onInput);
+    target.addEventListener('change', onChange);
     if (!isSelect) target.addEventListener('keydown', onKey);
     guide.cleanup = () => {
-      target.removeEventListener('input',  check);
-      target.removeEventListener('change', check);
+      clearInterval(poll);
+      target.removeEventListener('input',  onInput);
+      target.removeEventListener('change', onChange);
       target.removeEventListener('keydown', onKey);
     };
     return;
@@ -474,8 +532,13 @@ async function runStep(idx) {
       clearHighlight();
       advanceAfterAction(idx);
     } else {
-      // 타겟 바깥 클릭 → 안내 중단 (위젯/목표는 유지)
-      stopGoal();
+      // 타겟이 아닌 곳을 클릭해도 "목표를 취소하지 않는다" (← 예전엔 여기서 stopGoal로
+      // 목표를 지워서 '검색은 되는데 이후 대응이 없는' 버그가 났음).
+      // AI가 잡은 타겟과 실제 누른 요소(버튼 속 아이콘/텍스트, 재렌더된 요소 등)가
+      // 다를 수 있다. 그 클릭이 페이지를 전환시키면 목표(GOAL_KEY)는 그대로 남아
+      // 새 페이지의 resume이 이어받는다. 전환이 없으면 현재 안내를 그대로 유지한다.
+      // (취소는 위젯의 × 버튼으로만)
+      console.log('[NUI] 타겟 외 클릭 — 안내/목표 유지');
     }
   };
   guide.clickTarget = target;
@@ -504,7 +567,7 @@ function advanceAfterAction(idx) {
     if (document.hidden || document.visibilityState === 'hidden') return;
     if (!guide.active) return;
     if (moreSteps) {
-      goalReplans = 0;               // 같은 페이지에서 진전 → 카운터 리셋
+      resetActionGuard();               // 같은 페이지에서 진전 → 카운터 리셋
       runStep(nextIdx);
     } else {
       replanSamePage();             // 같은 페이지 계획 소진 → 목표 기준 재계획
@@ -559,6 +622,15 @@ function findTarget(selector, textHint) {
     const t = getElTextNorm(e);
     if (t && t.length >= 2 && hint.includes(t)) return e;
   }
+  // 4. 단어 단위 매칭: hint의 모든 단어가 요소 텍스트에 들어있으면 매칭
+  //    (예: hint "증여세 자동계산" ↔ 요소 "증여세 신고 > … > (모의계산) 증여세 자동계산")
+  const hintWords = hint.split(' ').filter(w => w.length >= 2);
+  if (hintWords.length) {
+    for (const e of candidates) {
+      const t = getElTextNorm(e);
+      if (t && hintWords.every(w => t.includes(w))) return e;
+    }
+  }
   return null;
 }
 
@@ -593,7 +665,7 @@ function waitForDomChange() {
 
 function finishGoal() {
   guide.active = false;
-  goalReplans = 0;
+  resetActionGuard();
   clearHighlight();
   // 목표 달성 → 더 이상 새 페이지에서 자동 재계획하지 않도록 목표 제거
   chrome.storage.local.remove(GOAL_KEY);
@@ -730,46 +802,95 @@ function renderRoadmap(currIdx) {
 // 목표는 storage에 남아 페이지가 전환돼도 새 페이지에서 자동으로 이어진다.
 async function startGuide(prompt) {
   stopGuide();
-  goalReplans = 0;
+  resetActionGuard();
   chrome.storage.local.set({ [GOAL_KEY]: { goal: prompt, ts: Date.now() } });
   chrome.storage.local.remove(WIDGET_DRAFT_KEY);
   planAndRun(prompt);
 }
 
 // 현재 페이지를 크롤링해 "목표 기준 다음 클릭"을 Gemini에 요청하고 실행한다.
+// 한 단계를 사람이 읽을 수 있는 짧은 설명으로 (AI 메모리용)
+function describeStep(s) {
+  if (!s) return '';
+  if (s.action === 'type' || s.action === 'fill') return `'${s.value || ''}' 입력 (${s.text || s.message || ''})`;
+  if (s.action === 'select') return `'${s.value || ''}' 선택`;
+  return `'${s.text || s.message || ''}' 클릭`;
+}
+
 function planAndRun(goal) {
   if (!goal) return;
-  // 목표 유효시간 갱신 (멀티페이지 진행 중 만료 방지)
-  chrome.storage.local.set({ [GOAL_KEY]: { goal, ts: Date.now() } });
+  // 이전 단계에서 붙은 리스너 정리 (목표/위젯은 유지) — 재계획 시 리스너 누수 방지
+  if (guide.clickHandler) {
+    document.removeEventListener('click', guide.clickHandler, true);
+    guide.clickHandler = null; guide.clickTarget = null;
+  }
+  if (guide.cleanup) { try { guide.cleanup(); } catch {} guide.cleanup = null; }
   setWidgetState('loading');
 
-  const elements = getAllElements();
-  chrome.runtime.sendMessage({ action: 'ANALYZE_WITH_GEMINI', prompt: goal, domStructure: elements }, res => {
-    setWidgetState('idle');
-    if (!res || res.error) {
-      showError(res?.error || '분석 실패');
-      ensureWidget();
-      return;
+  chrome.storage.local.get(GOAL_KEY, (d) => {
+    const g = d?.[GOAL_KEY] || {};
+    let history = Array.isArray(g.history) ? g.history : [];
+    // 이전 페이지에서 실행한 계획을 history(메모리)로 합친다.
+    // ※ 이 기록은 "계획 시점"(페이지가 막 로드된 직후)에 저장하므로
+    //    클릭→네비게이션 경합 없이 안전하게 남는다.
+    if (Array.isArray(g.currentPlanDesc) && g.currentPlanDesc.length) {
+      history = history.concat(g.currentPlanDesc).slice(-20);
     }
-    const seq = Array.isArray(res.clickSequence) ? res.clickSequence : [];
-    // status가 'done'이거나 클릭할 게 없으면 목표 달성으로 간주
-    if (res.status === 'done' || seq.length === 0) {
-      finishGoal();
-      return;
-    }
-    guide = { active: true, sequence: seq, stepIdx: 0, timer: null, clickTarget: null, clickHandler: null };
-    runStep(0);
+    // 직전에 못 찾은 타겟(있으면) → AI에게 피드백해 다른 요소를 고르게 한다.
+    const lastMiss = g.lastMiss || '';
+
+    const elements = getAllElements();
+    chrome.runtime.sendMessage(
+      { action: 'ANALYZE_WITH_GEMINI', prompt: goal, history, lastMiss, domStructure: elements },
+      res => {
+        setWidgetState('idle');
+        if (!res || res.error) {
+          showError(res?.error || '분석 실패');
+          ensureWidget();
+          return;
+        }
+        const seq = Array.isArray(res.clickSequence) ? res.clickSequence : [];
+        // status가 'done'이거나 할 게 없으면 목표 달성으로 간주
+        if (res.status === 'done' || seq.length === 0) {
+          chrome.storage.local.set({ [GOAL_KEY]: { goal, ts: Date.now(), history } });
+          finishGoal();
+          return;
+        }
+
+        // ★ observe→act: AI가 여러 개를 줘도 "딱 다음 한 동작"만 실행한다.
+        //   그 동작이 끝나면(전환 또는 같은 페이지) DOM을 다시 읽어 새로 계획한다.
+        const next = seq[0];
+
+        // 무한루프/과잉행동 방지:
+        //  - 같은 동작이 반복되거나(진전 없음),
+        //  - 이미 history에 있는(=이미 한) 동작을 또 제안하면 "중복"으로 카운트.
+        const key  = actionKey(next);
+        const desc = describeStep(next);
+        const isRedundant = history.includes(desc);
+        if (key === lastActionKey || isRedundant) sameActionCount++;
+        else { sameActionCount = 0; lastActionKey = key; }
+        if (sameActionCount > 2) {
+          // 이미 목적지에 도착해 더 할 게 없는데 AI가 계속 추가 동작을 내는 상황 → 종료
+          console.log('[NUI] 중복/과잉 동작 감지 → 종료');
+          finishGoal();
+          return;
+        }
+
+        // 방금 실행할 한 동작을 메모리에 기록 (다음 재계획 때 history로 누적 → 반복 방지)
+        chrome.storage.local.set({
+          [GOAL_KEY]: { goal, ts: Date.now(), history, currentPlanDesc: [describeStep(next)] }
+        });
+
+        guide = { active: true, sequence: [next], stepIdx: 0, timer: null, clickTarget: null, clickHandler: null };
+        runStep(0);
+      }
+    );
   });
 }
 
-// 같은 페이지에서 계획을 소진했을 때 목표 기준으로 다시 계획 (무한루프 방지 가드).
+// 한 동작이 끝났는데 페이지 전환이 없을 때: 현재 DOM을 다시 읽어 "다음 한 동작"을 계획.
+// (무한루프 방지는 planAndRun 안의 "같은 동작 반복" 가드가 담당)
 function replanSamePage() {
-  goalReplans++;
-  if (goalReplans > 3) {
-    showError('이 페이지에서 다음 단계를 찾지 못했어요. 필요하면 다시 입력해주세요.');
-    ensureWidget();
-    return;
-  }
   chrome.storage.local.get(GOAL_KEY, (d) => {
     const g = d?.[GOAL_KEY]?.goal;
     if (g) planAndRun(g);
@@ -796,7 +917,7 @@ function stopGuide() {
 
 // 목표 자체를 취소 (사용자가 위젯을 닫거나 안내 밖을 클릭). 위젯은 호출부에서 관리.
 function stopGoal() {
-  goalReplans = 0;
+  resetActionGuard();
   chrome.storage.local.remove(GOAL_KEY);
   stopGuide();
 }
@@ -1043,7 +1164,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     // 새 페이지가 안정화되도록 잠시 대기 후, 목표 기준으로 다시 계획.
     // → 한 번의 프롬프트로 검색 → 결과 → 상품 → 장바구니까지 자동으로 이어진다.
     await sleep(800);
-    goalReplans = 0;
+    resetActionGuard();
     console.log('[NUI] 목표 이어서 진행:', goalObj.goal);
     planAndRun(goalObj.goal);
   } catch (e) {
