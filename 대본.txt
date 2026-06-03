@@ -12,7 +12,7 @@
    "Hi everyone. Have you ever opened a website and had no idea
     where to click? For people who didn't grow up online, that
     feeling happens every single day. We're Team Ieum, and we
-    built a digital guide that walks them through it."
+    built a step guide that walks them through it."
 
  1-B) 라이브 프리뷰
    "Here's the idea. You just say where you want to go - by typing,

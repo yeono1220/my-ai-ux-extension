@@ -750,9 +750,26 @@ function highlightTarget(el, message, num, total) {
     `;
     document.body.appendChild(tip);
     requestAnimationFrame(() => {
-      const top = Math.max(8, rect.top - tip.offsetHeight - 52);
+      // 말풍선이 "타겟 버튼을 가리지 않도록" 빈 공간(위→아래→오른쪽→왼쪽)에 배치
+      const tipH = tip.offsetHeight, tipW = tip.offsetWidth;
+      const gap = 14;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const clampX = (x) => Math.max(8, Math.min(x, vw - tipW - 8));
+      const clampY = (y) => Math.max(8, Math.min(y, vh - tipH - 8));
+      let top, left;
+      if (rect.top - tipH - gap >= 8) {                       // 위에 공간
+        top = rect.top - tipH - gap;        left = clampX(rect.left);
+      } else if (rect.bottom + gap + tipH <= vh - 8) {        // 아래에 공간
+        top = rect.bottom + gap;            left = clampX(rect.left);
+      } else if (rect.right + gap + tipW <= vw - 8) {         // 오른쪽에 공간
+        left = rect.right + gap;            top  = clampY(rect.top);
+      } else if (rect.left - gap - tipW >= 8) {               // 왼쪽에 공간
+        left = rect.left - gap - tipW;      top  = clampY(rect.top);
+      } else {                                                // 공간 없음: 상단 모서리
+        top = 8;                            left = clampX(rect.left);
+      }
       tip.style.top  = `${top}px`;
-      tip.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - 310))}px`;
+      tip.style.left = `${left}px`;
     });
   }, 350);
 }
