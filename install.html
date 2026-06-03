@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Install Ieum — Step Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --cyan: #00d4ff; --bg0: #04040e; --bg1: #07142c; }
+  html { scroll-behavior: smooth; }
+  html, body { height: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:
+      radial-gradient(1100px 650px at 50% -10%, rgba(0,212,255,.18), transparent 60%),
+      radial-gradient(800px 550px at 90% 110%, rgba(0,120,180,.16), transparent 60%),
+      linear-gradient(160deg, var(--bg0), var(--bg1));
+    background-attachment: fixed;
+    color: #eaf6ff; min-height: 100%; overflow-x: hidden;
+  }
+  .orb { position: fixed; border-radius: 50%; filter: blur(70px); opacity: .4; pointer-events: none; z-index: 0;
+         transform: translate(var(--px,0), var(--py,0)); transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+  .orb.a { width: 380px; height: 380px; background: #00d4ff; top: -120px; left: -100px; animation: f1 15s ease-in-out infinite; }
+  .orb.b { width: 300px; height: 300px; background: #0a6ed1; bottom: -110px; right: -80px; animation: f2 19s ease-in-out infinite; }
+  @keyframes f1 { 0%,100%{transform:translate(var(--px,0),var(--py,0))} 50%{transform:translate(calc(var(--px,0) + 40px),calc(var(--py,0) + 30px))} }
+  @keyframes f2 { 0%,100%{transform:translate(var(--px,0),var(--py,0))} 50%{transform:translate(calc(var(--px,0) - 30px),calc(var(--py,0) - 40px))} }
+
+  .wrap { position: relative; z-index: 1; max-width: 760px; margin: 0 auto; padding: 70px 36px 90px; }
+
+  .reveal { opacity: 0; transform: translateY(34px); transition: opacity .75s ease, transform .75s cubic-bezier(.2,.85,.25,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* HERO */
+  .head { text-align: center; margin-bottom: 60px; }
+  .logo { width: 88px; height: 88px; border-radius: 24px; margin: 0 auto 22px; display: block;
+    box-shadow: 0 0 0 1px rgba(0,212,255,.3), 0 0 46px 8px rgba(0,212,255,.4);
+    animation: logoIn .9s cubic-bezier(.2,1.2,.3,1) both, pulse 3s ease-in-out .9s infinite; }
+  @keyframes logoIn { from{opacity:0;transform:scale(.5) rotate(-15deg)} to{opacity:1;transform:none} }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 1px rgba(0,212,255,.3),0 0 40px 6px rgba(0,212,255,.35)} 50%{box-shadow:0 0 0 1px rgba(0,212,255,.5),0 0 72px 14px rgba(0,212,255,.6)} }
+  .badge { display:inline-block; font-size:12px; letter-spacing:3px; font-weight:700; color:var(--cyan); text-transform:uppercase;
+    border:1px solid rgba(0,212,255,.35); border-radius:100px; padding:6px 16px; margin-bottom:18px; background:rgba(0,212,255,.06); }
+  .head h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px;
+    background: linear-gradient(180deg,#fff 35%,#9fe5ff); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .head p { margin-top: 14px; font-size: 17px; color: rgba(234,246,255,.65); }
+  .head .time { margin-top: 16px; display:inline-flex; align-items:center; gap:8px; font-size:14px; color:var(--cyan);
+    background:rgba(0,212,255,.08); border:1px solid rgba(0,212,255,.25); border-radius:100px; padding:8px 18px; }
+
+  /* STEP */
+  .step { display: flex; gap: 24px; margin-bottom: 30px; align-items: flex-start; }
+  .step .num { flex-shrink:0; width: 48px; height: 48px; border-radius: 50%; background: var(--cyan); color:#04040e;
+    font-weight: 800; font-size: 20px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 20px rgba(0,212,255,.55);
+    position: relative; z-index: 2; }
+  .step .body { flex: 1; padding-bottom: 10px; }
+  .step .body h3 { font-size: 20px; font-weight: 700; }
+  .step .body .desc { margin-top: 6px; font-size: 14.5px; line-height: 1.65; color: rgba(234,246,255,.62); }
+  .step .body .mock { margin-top: 16px; }
+  /* vertical connecting line */
+  .step-line { position: relative; }
+  .step-line::before { content:""; position:absolute; left: 23px; top: 48px; bottom: -30px; width: 2px;
+    background: linear-gradient(180deg, rgba(0,212,255,.5), rgba(0,212,255,.08)); z-index:1; }
+
+  /* mock building blocks */
+  .mock-card { background:#0b1428; border:1px solid rgba(0,212,255,.2); border-radius:14px; padding:18px; box-shadow:0 12px 34px rgba(0,0,0,.4); }
+
+  /* 1: add to chrome */
+  .cws { display:flex; align-items:center; gap:14px; }
+  .cws .ic { width:46px; height:46px; border-radius:11px; }
+  .cws .nm { flex:1; }
+  .cws .nm .t { font-size:15px; font-weight:600; color:#eaf6ff; }
+  .cws .nm .s { font-size:12px; color:rgba(234,246,255,.45); margin-top:2px; }
+  .add-btn { background:#1a73e8; color:#fff; border:none; border-radius:8px; padding:11px 20px; font-size:14px; font-weight:600;
+    box-shadow:0 2px 10px rgba(26,115,232,.5); animation: nudge 2.4s ease-in-out infinite; white-space:nowrap; }
+  @keyframes nudge { 0%,92%,100%{transform:scale(1)} 96%{transform:scale(1.06)} }
+
+  /* 2: chrome permission dialog */
+  .dialog { background:#fff; color:#202124; border-radius:12px; padding:18px 20px; max-width:380px; margin:0 auto;
+    box-shadow:0 16px 50px rgba(0,0,0,.5); font-size:13.5px; }
+  .dialog .q { font-size:15px; font-weight:600; display:flex; align-items:center; gap:10px; }
+  .dialog .q img { width:24px; height:24px; border-radius:6px; }
+  .dialog ul { margin:12px 0 14px 6px; list-style:none; }
+  .dialog li { color:#5f6368; font-size:13px; line-height:1.7; padding-left:18px; position:relative; }
+  .dialog li::before { content:"•"; position:absolute; left:2px; color:#5f6368; }
+  .dialog .acts { display:flex; justify-content:flex-end; gap:10px; }
+  .dialog .b1 { background:#1a73e8; color:#fff; border:none; border-radius:7px; padding:8px 16px; font-size:13px; font-weight:600; box-shadow:0 0 0 0 rgba(26,115,232,.5); animation: ring 2s ease-in-out infinite; }
+  @keyframes ring { 0%,100%{box-shadow:0 0 0 0 rgba(26,115,232,.5)} 50%{box-shadow:0 0 0 6px rgba(26,115,232,0)} }
+  .dialog .b2 { background:#fff; color:#1a73e8; border:1px solid #dadce0; border-radius:7px; padding:8px 16px; font-size:13px; font-weight:600; }
+
+  /* 3: pin toolbar */
+  .toolbar { display:flex; align-items:center; gap:10px; background:#0c1730; border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:10px 14px; }
+  .toolbar .spacer { flex:1; }
+  .toolbar .puzzle { font-size:20px; }
+  .pin-pop { margin-top:10px; margin-left:auto; width:240px; background:#fff; color:#202124; border-radius:10px; padding:10px; box-shadow:0 14px 40px rgba(0,0,0,.45); }
+  .pin-row { display:flex; align-items:center; gap:10px; padding:8px; border-radius:8px; }
+  .pin-row.hl { background:#e8f0fe; }
+  .pin-row .pi { width:26px; height:26px; border-radius:6px; }
+  .pin-row .pn { flex:1; font-size:13px; font-weight:500; }
+  .pin-row .pp { font-size:16px; color:#1a73e8; animation: nudge 2.2s ease-in-out infinite; }
+
+  /* 4: api key */
+  .opt { background:#001f3f; border-radius:12px; padding:18px; }
+  .opt h4 { font-size:15px; font-weight:700; color:#fff; }
+  .opt p { font-size:13px; color:rgba(255,255,255,.7); margin:8px 0 12px; }
+  .opt .field { display:flex; gap:10px; }
+  .opt input { flex:1; padding:10px 12px; border-radius:6px; border:none; font-size:13px; background:#fff; color:#333; }
+  .opt .save { background:var(--cyan); color:#00121c; border:none; border-radius:6px; padding:10px 18px; font-weight:800; font-size:13px; }
+  .opt .hint { margin-top:10px; font-size:11.5px; color:rgba(255,255,255,.5); }
+  .opt .hint a { color:var(--cyan); }
+
+  /* DONE */
+  .done { margin-top: 50px; text-align:center; background: linear-gradient(160deg, rgba(0,217,122,.12), rgba(0,212,255,.05));
+    border:1px solid rgba(0,217,122,.3); border-radius:20px; padding:40px 30px; box-shadow:0 0 50px rgba(0,217,122,.12); }
+  .done .check { width:64px; height:64px; border-radius:50%; margin:0 auto 18px; background:linear-gradient(135deg,#008a4a,#00d97a);
+    display:flex; align-items:center; justify-content:center; font-size:32px; color:#fff; box-shadow:0 0 36px rgba(0,217,122,.6);
+    animation: pop .6s cubic-bezier(.2,1.4,.3,1) both; }
+  @keyframes pop { from{transform:scale(0)} to{transform:scale(1)} }
+  .done h2 { font-size:26px; font-weight:800; }
+  .done p { margin-top:10px; font-size:15px; color:rgba(234,246,255,.7); line-height:1.6; }
+  .done .pill { margin-top:18px; display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,#050510f5,#07142cf5);
+    border:1px solid rgba(0,212,255,.4); border-radius:40px; padding:10px 18px; font-size:14px; color:#cfeaff; }
+  .done .pill .ic2 { color:var(--cyan); }
+
+  @media (max-width: 620px) { .head h1{font-size:32px} .step{gap:16px} }
+</style>
+</head>
+<body>
+  <div class="orb a"></div>
+  <div class="orb b"></div>
+
+  <div class="wrap">
+
+    <div class="head">
+      <img class="logo" src="icon128.png" alt="Step Guide" />
+      <div class="badge">Step Guide</div>
+      <h1>Get the guide in 4 steps</h1>
+      <p>Install Step Guide on Chrome and you're ready to be guided on any website.</p>
+      <div class="time">⏱️ Takes about 30 seconds</div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="step step-line reveal">
+      <div class="num">1</div>
+      <div class="body">
+        <h3>Add it to Chrome</h3>
+        <div class="desc">Open the Chrome Web Store page and click the blue <b>Add to Chrome</b> button.</div>
+        <div class="mock">
+          <div class="mock-card cws">
+            <img class="ic" src="icon128.png" alt="" />
+            <div class="nm"><div class="t">Step Guide - 웹 길안내 도우미</div><div class="s">★★★★★ 5.0 · Accessibility</div></div>
+            <button class="add-btn">Add to Chrome</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step step-line reveal">
+      <div class="num">2</div>
+      <div class="body">
+        <h3>Confirm the install</h3>
+        <div class="desc">Chrome asks for permission. Click <b>Add extension</b> to continue.</div>
+        <div class="mock">
+          <div class="dialog">
+            <div class="q"><img src="icon128.png" alt="" /> Add "Step Guide - 웹 길안내 도우미"?</div>
+            <ul>
+              <li>Read and change your data on websites you visit</li>
+              <li>Show step-by-step click guidance</li>
+            </ul>
+            <div class="acts">
+              <button class="b2">Cancel</button>
+              <button class="b1">Add extension</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step step-line reveal">
+      <div class="num">3</div>
+      <div class="body">
+        <h3>Pin it to your toolbar</h3>
+        <div class="desc">Click the 🧩 puzzle icon, then the 📌 pin next to Step Guide so it's always one click away.</div>
+        <div class="mock">
+          <div class="mock-card">
+            <div class="toolbar">
+              <span class="spacer"></span>
+              <span class="puzzle">🧩</span>
+            </div>
+            <div class="pin-pop">
+              <div class="pin-row hl">
+                <img class="pi" src="icon128.png" alt="" />
+                <span class="pn">Step Guide - 웹 길안내 도우미</span>
+                <span class="pp">📌</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step reveal">
+      <div class="num">4</div>
+      <div class="body">
+        <h3>Add your Gemini API key</h3>
+        <div class="desc">Open the extension's options page once and paste your key. This powers the AI that maps each click path.</div>
+        <div class="mock">
+          <div class="opt">
+            <h4>Step Guide 설정</h4>
+            <p>Gemini API 키를 입력해주세요:</p>
+            <div class="field">
+              <input type="password" value="AIzaSy••••••••••••••••" readonly />
+              <button class="save">저장하기</button>
+            </div>
+            <div class="hint">Get a free key at <a>aistudio.google.com</a> · stored locally on your device only.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DONE -->
+    <div class="done reveal">
+      <div class="check">✓</div>
+      <h2>You're all set!</h2>
+      <p>Open any website, click the Step Guide icon, and just say where you want to go.</p>
+      <div class="pill"><span class="ic2">✦</span> "Where would you like to go?"</div>
+    </div>
+
+  </div>
+
+  <script>
+    const io = new IntersectionObserver((es) => {
+      es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    const orbs = document.querySelectorAll('.orb');
+    window.addEventListener('mousemove', (ev) => {
+      const cx = (ev.clientX / window.innerWidth - .5), cy = (ev.clientY / window.innerHeight - .5);
+      orbs.forEach((o, i) => { const d = (i + 1) * 16; o.style.setProperty('--px', (cx*d)+'px'); o.style.setProperty('--py', (cy*d)+'px'); });
+    });
+  </script>
+</body>
+</html>
