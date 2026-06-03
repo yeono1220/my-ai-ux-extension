@@ -10,6 +10,17 @@ window.__nuiContentLoaded = true;
 let guide = { active: false, sequence: [], stepIdx: 0, timer: null, clickTarget: null, clickHandler: null };
 const HIGHLIGHT_MS = 1800;
 
+// 페이지 리로드/전환 후에도 위젯이 유지되도록 상태를 storage에 저장
+const WIDGET_OPEN_KEY  = 'nextui_widget_open';   // 위젯 열림 여부
+const WIDGET_POS_KEY   = 'nextui_widget_pos';    // 드래그한 위치
+const WIDGET_DRAFT_KEY = 'nextui_widget_draft';  // 입력 중이던 텍스트
+
+// 목표 기반 멀티페이지 안내: 사용자의 "최종 목표"를 storage에 저장해 두고
+// 페이지가 바뀔 때마다 현재 페이지를 다시 분석해 다음 클릭을 재계획한다.
+const GOAL_KEY  = 'nextui_goal';                 // { goal: string, ts: number }
+const GOAL_TTL  = 10 * 60 * 1000;                // 목표 유효시간 10분
+let goalReplans = 0;                             // 같은 페이지 연속 재계획 횟수 (무한루프 방지)
+
 
 // ══════════════════════════════════════════════════════════════
 // 1. DOM 크롤링
@@ -19,6 +30,10 @@ function getAllElements() {
     'a','button',
     '[role="button"]','[role="menuitem"]','[role="tab"]','[role="option"]',
     'input[type="button"]','input[type="submit"]','input[type="reset"]',
+    // 검색어 입력용 텍스트 입력칸 (type 액션 대상)
+    'input[type="text"]','input[type="search"]','input:not([type])','textarea',
+    'input[name*="search" i]','input[id*="search" i]','input[class*="search" i]',
+    'input[placeholder]',
     'summary','nav li a','.gnb a','.lnb a',
     '[class*="menu"] a','[class*="nav"] a','[class*="depth"] a','[class*="sub"] a',
   ].join(',');
@@ -33,9 +48,15 @@ function getAllElements() {
       seen.add(s);
       const rect = el.getBoundingClientRect();
       const cs   = window.getComputedStyle(el);
+      const tag  = el.tagName.toLowerCase();
+      // 입력 가능한 요소인지 표시 (AI가 type 액션 대상으로 고를 수 있게)
+      const isInput = tag === 'textarea' ||
+        (tag === 'input' && !['button','submit','reset','checkbox','radio','hidden'].includes((el.getAttribute('type') || 'text').toLowerCase()));
       return {
-        index: i, tag: el.tagName.toLowerCase(), text: text.substring(0, 60),
-        id: el.id || '', selector: s, href: el.href || '',
+        index: i, tag, text: text.substring(0, 60),
+        id: el.id || '', selector: s, href: typeof el.href === 'string' ? el.href : '',
+        inputType: el.getAttribute ? (el.getAttribute('type') || '') : '',
+        isTextInput: isInput,
         isVisible: rect.width > 0 && rect.height > 0,
         wasHidden: cs.display === 'none' || cs.visibility === 'hidden',
         location: { x: Math.round(rect.left), y: Math.round(rect.top) },
@@ -46,9 +67,13 @@ function getAllElements() {
 }
 
 function getElText(el) {
+  // el.value 가 문자열이 아닐 수 있음(숫자형 value, DOM clobbering 등) → 타입 가드
+  const val = typeof el.value === 'string' ? el.value.trim() : '';
   return el.innerText?.trim() || el.textContent?.trim() ||
-         el.getAttribute('aria-label')?.trim() || el.getAttribute('title')?.trim() ||
-         el.value?.trim() || '';
+         el.getAttribute?.('aria-label')?.trim() || el.getAttribute?.('title')?.trim() ||
+         el.getAttribute?.('placeholder')?.trim() ||
+         val ||
+         el.getAttribute?.('name')?.trim() || '';
 }
 
 function getUniqueSelector(el) {
@@ -330,9 +355,9 @@ function injectStyles() {
 // 3. 클릭 시퀀스 실행
 // ══════════════════════════════════════════════════════════════
 async function runStep(idx) {
-  if (!guide.active || idx >= guide.sequence.length) {
-    finishGuide(); return;
-  }
+  if (!guide.active) return;
+  // 이 페이지의 계획을 모두 소진 → 목표 기준으로 재계획
+  if (idx >= guide.sequence.length) { replanSamePage(); return; }
   const step = guide.sequence[idx];
   guide.stepIdx = idx;
   renderRoadmap(idx);
@@ -342,11 +367,55 @@ async function runStep(idx) {
   if (!guide.active) return;
   if (!target) {
     console.warn('[NUI] 타겟 못 찾음 (5s 대기 후):', step.text);
-    showError(`${idx + 1}단계 버튼을 찾지 못했어요: ${step.text}`);
-    stopGuide();
+    // 못 찾으면(페이지 변동 등) 같은 페이지에서 목표 기준 재계획
+    replanSamePage();
     return;
   }
 
+  // ── 입력(type) 액션: 사용자가 직접 입력하도록 유도 (자동 입력 X) ──
+  // 검색창을 스포트라이트하고 "○○○를 입력하세요"라고 안내한 뒤,
+  // 사용자가 그 검색어를 입력하면 다음 단계(검색 버튼 클릭)로 넘어간다.
+  if (step.action === 'type' || step.action === 'fill') {
+    const term = step.value || '';
+    const msg = step.message || (term ? `검색창에 '${term}' 라고 입력하세요` : '검색창에 검색어를 입력하세요');
+    highlightTarget(target, msg, idx + 1, guide.sequence.length);
+    try { target.focus(); } catch {}
+
+    // 공백 차이를 무시하고 비교 (예: "휴대용 선풍기" vs "휴대용선풍기")
+    const squash = (x) => nrm(x).replace(/\s+/g, '');
+    const expect = squash(term);
+
+    const goNext = () => {
+      if (guide.cleanup) { guide.cleanup(); guide.cleanup = null; }
+      clearHighlight();
+      const nextIdx = idx + 1;
+      if (nextIdx < guide.sequence.length) { goalReplans = 0; runStep(nextIdx); }
+      else { replanSamePage(); }
+    };
+
+    const onInput = () => {
+      if (!guide.active) return;
+      const cur = squash(target.value);
+      const matched = expect ? cur.includes(expect) : (target.value || '').trim().length > 0;
+      if (matched) goNext();          // 기대 검색어를 다 입력함 → 다음 단계 안내
+    };
+    const onKey = (e) => {
+      if (e.key !== 'Enter') return;  // 엔터로 바로 진행/검색
+      if (guide.cleanup) { guide.cleanup(); guide.cleanup = null; }
+      clearHighlight();
+      advanceAfterAction(idx);        // 엔터가 검색 제출→전환이면 새 페이지 resume이 이어받음
+    };
+
+    target.addEventListener('input', onInput);
+    target.addEventListener('keydown', onKey);
+    guide.cleanup = () => {
+      target.removeEventListener('input', onInput);
+      target.removeEventListener('keydown', onKey);
+    };
+    return;
+  }
+
+  // ── 기본(click) 액션: 사용자가 직접 클릭하도록 강조 ──
   highlightTarget(target, step.message, idx + 1, guide.sequence.length);
   showCountdown(HIGHLIGHT_MS);
 
@@ -360,36 +429,45 @@ async function runStep(idx) {
       guide.clickHandler = null;
       guide.clickTarget = null;
       console.log('[NUI] 사용자 클릭:', step.text);
-
-      // 페이지 전환 대비: 다음 단계(또는 완료) 상태를 즉시 저장
-      const nextIdx = idx + 1;
-      chrome.storage.local.set({
-        nextui_last_guide: { sequence: guide.sequence, stepIdx: nextIdx, ts: Date.now() }
-      });
-
       clearHighlight();
-
-      if (nextIdx >= guide.sequence.length) {
-        // 마지막 단계: 페이지 전환이 일어나면 새 페이지에서 resume IIFE가 배너를 띄움
-        // 전환이 없으면 1.2초 후 같은 페이지에서 finishGuide 호출 (배너 깜빡임 방지)
-        let navigating = false;
-        const onUnload = () => { navigating = true; };
-        window.addEventListener('beforeunload', onUnload, { once: true });
-        setTimeout(() => {
-          window.removeEventListener('beforeunload', onUnload);
-          if (!navigating) finishGuide();
-        }, 1200);
-      } else {
-        runStep(nextIdx);
-      }
+      advanceAfterAction(idx);
     } else {
-      // 타겟 바깥 클릭 → 안내 중단 (기존 오버레이 클릭 동작과 동등)
-      stopGuide();
+      // 타겟 바깥 클릭 → 안내 중단 (위젯/목표는 유지)
+      stopGoal();
     }
   };
   guide.clickTarget = target;
   guide.clickHandler = onDocClick;
   document.addEventListener('click', onDocClick, true);
+}
+
+// 한 단계(클릭 또는 입력) 완료 후 진행 처리.
+// 페이지가 전환되면 새 페이지의 resume IIFE가 목표(GOAL_KEY)를 읽어 자동 재계획한다.
+// 전환이 없으면 같은 페이지에서 다음 단계로 가거나, 계획이 끝났으면 재계획한다.
+function advanceAfterAction(idx) {
+  const nextIdx = idx + 1;
+  const moreSteps = nextIdx < guide.sequence.length;
+  let navigating = false;
+  // 같은 탭 전환 감지: beforeunload + pagehide(더 신뢰도 높음)
+  const onLeave = () => { navigating = true; };
+  window.addEventListener('beforeunload', onLeave, { once: true });
+  window.addEventListener('pagehide',     onLeave, { once: true });
+  setTimeout(() => {
+    window.removeEventListener('beforeunload', onLeave);
+    window.removeEventListener('pagehide',     onLeave);
+    if (navigating) return;          // 같은 탭에서 페이지 전환 → 새 페이지 resume이 이어받음
+    // 새 탭이 열려 사용자가 그쪽으로 이동한 경우: 이 탭은 백그라운드(hidden)가 됨.
+    // 이때 이 탭에서 재계획하면 새 탭과 충돌("삑")하므로 진행하지 않는다.
+    // 새 탭은 공유 storage의 목표/위젯을 읽어 스스로 이어받는다.
+    if (document.hidden || document.visibilityState === 'hidden') return;
+    if (!guide.active) return;
+    if (moreSteps) {
+      goalReplans = 0;               // 같은 페이지에서 진전 → 카운터 리셋
+      runStep(nextIdx);
+    } else {
+      replanSamePage();             // 같은 페이지 계획 소진 → 목표 기준 재계획
+    }
+  }, 1200);
 }
 
 async function waitForTarget(selector, textHint, maxMs) {
@@ -417,7 +495,7 @@ function findTarget(selector, textHint) {
   const hint = nrm(textHint);
   if (!hint) return null;
 
-  const SEL = 'a,button,summary,[role="button"],[role="menuitem"],[role="tab"],[role="option"],[role="link"],[onclick],input[type="button"],input[type="submit"],input[type="reset"]';
+  const SEL = 'a,button,summary,[role="button"],[role="menuitem"],[role="tab"],[role="option"],[role="link"],[onclick],input[type="button"],input[type="submit"],input[type="reset"],input[type="text"],input[type="search"],input:not([type]),textarea';
   const all = Array.from(document.querySelectorAll(SEL));
   const visible = all.filter(e => {
     const r = e.getBoundingClientRect();
@@ -443,14 +521,19 @@ function findTarget(selector, textHint) {
 }
 
 function nrm(s) {
-  return (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  // 문자열이 아닌 값(숫자, 엘리먼트 등)이 들어와도 안전하게 처리
+  const str = typeof s === 'string' ? s : '';
+  return str.replace(/\s+/g, ' ').trim().toLowerCase();
 }
 
 function getElTextNorm(el) {
+  const val = typeof el.value === 'string' ? el.value : '';
   return nrm(el.textContent) ||
          nrm(el.getAttribute && el.getAttribute('aria-label')) ||
          nrm(el.getAttribute && el.getAttribute('title')) ||
-         nrm(el.value);
+         nrm(el.getAttribute && el.getAttribute('placeholder')) ||
+         nrm(val) ||
+         nrm(el.getAttribute && el.getAttribute('name'));
 }
 
 function waitForDomChange() {
@@ -466,15 +549,15 @@ function waitForDomChange() {
   });
 }
 
-function finishGuide() {
+function finishGoal() {
   guide.active = false;
+  goalReplans = 0;
   clearHighlight();
-  // storage는 dismiss 시점에 클리어 — 페이지 전환 시 새 페이지 resume이 배너를 띄울 수 있도록
+  // 목표 달성 → 더 이상 새 페이지에서 자동 재계획하지 않도록 목표 제거
+  chrome.storage.local.remove(GOAL_KEY);
 
   // 위젯 유지: 목적지 도착 후에도 다음 질문 가능하도록
-  if (!document.getElementById('nui-widget')) {
-    injectFloatingWidget();
-  }
+  ensureWidget();
 
   // 로드맵을 도착 상태로 리렌더 (마지막 단계 highlighted)
   renderArrivedRoadmap();
@@ -494,7 +577,8 @@ function renderArrivedRoadmap() {
     const cls = isLast ? 'curr arrived' : 'done';
     const d = document.createElement('div');
     d.className = `rm-step ${cls}`;
-    d.innerHTML = `<div class="dot"></div><span>${step.text}</span>`;
+    const label = step.text || (step.action === 'type' || step.action === 'fill' ? `검색: ${step.value || ''}` : step.message) || '단계';
+    d.innerHTML = `<div class="dot"></div><span>${label}</span>`;
     c.appendChild(d);
   });
   document.body.appendChild(c);
@@ -510,7 +594,7 @@ function showArrivalBanner() {
   setTimeout(() => {
     banner.remove();
     document.getElementById('nui-roadmap')?.remove();
-    chrome.storage.local.remove('nextui_last_guide');
+    chrome.storage.local.remove(GOAL_KEY);
   }, 5000);
 }
 
@@ -589,7 +673,8 @@ function renderRoadmap(currIdx) {
     const cls = i < currIdx ? 'done' : i === currIdx ? 'curr' : '';
     const d = document.createElement('div');
     d.className = `rm-step ${cls}`;
-    d.innerHTML = `<div class="dot"></div><span>${step.text}</span>`;
+    const label = step.text || (step.action === 'type' || step.action === 'fill' ? `검색: ${step.value || ''}` : step.message) || '단계';
+    d.innerHTML = `<div class="dot"></div><span>${label}</span>`;
     c.appendChild(d);
   });
   document.body.appendChild(c);
@@ -599,25 +684,58 @@ function renderRoadmap(currIdx) {
 // ══════════════════════════════════════════════════════════════
 // 6. 시작 / 중단
 // ══════════════════════════════════════════════════════════════
+// 사용자가 프롬프트를 입력 → 최종 목표로 저장하고 현재 페이지부터 계획 시작.
+// 목표는 storage에 남아 페이지가 전환돼도 새 페이지에서 자동으로 이어진다.
 async function startGuide(prompt) {
   stopGuide();
-  chrome.storage.local.remove('nextui_last_guide');
+  goalReplans = 0;
+  chrome.storage.local.set({ [GOAL_KEY]: { goal: prompt, ts: Date.now() } });
+  chrome.storage.local.remove(WIDGET_DRAFT_KEY);
+  planAndRun(prompt);
+}
+
+// 현재 페이지를 크롤링해 "목표 기준 다음 클릭"을 Gemini에 요청하고 실행한다.
+function planAndRun(goal) {
+  if (!goal) return;
+  // 목표 유효시간 갱신 (멀티페이지 진행 중 만료 방지)
+  chrome.storage.local.set({ [GOAL_KEY]: { goal, ts: Date.now() } });
   setWidgetState('loading');
 
   const elements = getAllElements();
-  chrome.runtime.sendMessage({ action: 'ANALYZE_WITH_GEMINI', prompt, domStructure: elements }, res => {
+  chrome.runtime.sendMessage({ action: 'ANALYZE_WITH_GEMINI', prompt: goal, domStructure: elements }, res => {
     setWidgetState('idle');
     if (!res || res.error) {
       showError(res?.error || '분석 실패');
+      ensureWidget();
       return;
     }
-    const seq = res.clickSequence;
-    if (!seq || seq.length === 0) { showError('관련 버튼을 찾지 못했어요'); return; }
+    const seq = Array.isArray(res.clickSequence) ? res.clickSequence : [];
+    // status가 'done'이거나 클릭할 게 없으면 목표 달성으로 간주
+    if (res.status === 'done' || seq.length === 0) {
+      finishGoal();
+      return;
+    }
     guide = { active: true, sequence: seq, stepIdx: 0, timer: null, clickTarget: null, clickHandler: null };
     runStep(0);
   });
 }
 
+// 같은 페이지에서 계획을 소진했을 때 목표 기준으로 다시 계획 (무한루프 방지 가드).
+function replanSamePage() {
+  goalReplans++;
+  if (goalReplans > 3) {
+    showError('이 페이지에서 다음 단계를 찾지 못했어요. 필요하면 다시 입력해주세요.');
+    ensureWidget();
+    return;
+  }
+  chrome.storage.local.get(GOAL_KEY, (d) => {
+    const g = d?.[GOAL_KEY]?.goal;
+    if (g) planAndRun(g);
+    else ensureWidget();
+  });
+}
+
+// 진행 중인 안내(시각 요소)만 정리. 위젯과 목표(GOAL_KEY)는 건드리지 않는다.
 function stopGuide() {
   guide.active = false;
   if (guide.clickHandler) {
@@ -625,12 +743,20 @@ function stopGuide() {
     guide.clickHandler = null;
     guide.clickTarget = null;
   }
+  // 입력(type) 단계에서 붙인 input/keydown 리스너 정리
+  if (guide.cleanup) { try { guide.cleanup(); } catch {} guide.cleanup = null; }
   clearHighlight();
   clearTimeout(guide.timer);
   document.getElementById('nui-roadmap')?.remove();
   document.getElementById('nui-bar')?.remove();
   document.getElementById('nui-arrival')?.remove();
-  chrome.storage.local.remove('nextui_last_guide');
+}
+
+// 목표 자체를 취소 (사용자가 위젯을 닫거나 안내 밖을 클릭). 위젯은 호출부에서 관리.
+function stopGoal() {
+  goalReplans = 0;
+  chrome.storage.local.remove(GOAL_KEY);
+  stopGuide();
 }
 
 function showError(msg) {
@@ -648,15 +774,8 @@ function showError(msg) {
 // ══════════════════════════════════════════════════════════════
 // 7. 플로팅 위젯
 // ══════════════════════════════════════════════════════════════
-function injectFloatingWidget() {
-  injectStyles();
-  if (document.getElementById('nui-widget')) {
-    // 이미 있으면 토글 (닫기)
-    stopGuide();
-    document.getElementById('nui-widget').remove();
-    return;
-  }
-
+// 위젯 DOM 생성 (토글 없음). 저장된 위치/입력 초안을 복원한다.
+function buildWidget() {
   const w = document.createElement('div'); w.id = 'nui-widget';
   w.innerHTML = `
     <span class="wi">✦</span>
@@ -667,27 +786,48 @@ function injectFloatingWidget() {
   `;
   document.body.appendChild(w);
 
+  const input = document.getElementById('nui-input');
+
+  // 리로드 후에도 위치/입력 텍스트 유지
+  chrome.storage.local.get([WIDGET_POS_KEY, WIDGET_DRAFT_KEY], (d) => {
+    const pos = d?.[WIDGET_POS_KEY];
+    if (pos && typeof pos.left === 'number' && typeof pos.top === 'number') {
+      w.style.cssText += ';transition:none;transform:none;bottom:auto;';
+      w.style.left = pos.left + 'px';
+      w.style.top  = pos.top + 'px';
+    }
+    if (input && d?.[WIDGET_DRAFT_KEY]) input.value = d[WIDGET_DRAFT_KEY];
+  });
+
   document.getElementById('nui-close').addEventListener('click', () => {
-    stopGuide(); w.remove();
+    stopGoal();
+    w.remove();
+    // 사용자가 명시적으로 닫음 → 다음 페이지에서 자동 복원하지 않음
+    chrome.storage.local.set({ [WIDGET_OPEN_KEY]: false });
+    chrome.storage.local.remove(WIDGET_DRAFT_KEY);
   });
 
   const doSend = () => {
-    const p = document.getElementById('nui-input')?.value.trim();
-    if (p) startGuide(p);
+    const p = input?.value.trim();
+    if (p) { chrome.storage.local.remove(WIDGET_DRAFT_KEY); startGuide(p); }
   };
   document.getElementById('nui-send').addEventListener('click', doSend);
-  document.getElementById('nui-input').addEventListener('keydown', e => {
+  input.addEventListener('keydown', e => {
     if (e.key === 'Enter') doSend();
+  });
+  // 입력 중이던 텍스트 저장 (페이지 전환 시 손실 방지)
+  input.addEventListener('input', () => {
+    chrome.storage.local.set({ [WIDGET_DRAFT_KEY]: input.value });
   });
 
   // 음성 입력 (어르신 친화)
   document.getElementById('nui-mic').addEventListener('click', startVoiceInput);
 
-  // 드래그
-  let drag = false, sx, sy, ox, oy;
+  // 드래그 + 위치 저장
+  let drag = false, moved = false, sx, sy, ox, oy;
   w.addEventListener('mousedown', e => {
     if (['INPUT','BUTTON'].includes(e.target.tagName)) return;
-    drag = true;
+    drag = true; moved = false;
     const r = w.getBoundingClientRect();
     sx = e.clientX; sy = e.clientY; ox = r.left; oy = r.top;
     w.style.cssText += ';transition:none;transform:none;bottom:auto;';
@@ -696,13 +836,45 @@ function injectFloatingWidget() {
   });
   document.addEventListener('mousemove', e => {
     if (!drag) return;
+    moved = true;
     w.style.left = (ox + e.clientX - sx)+'px';
     w.style.top  = (oy + e.clientY - sy)+'px';
   });
-  document.addEventListener('mouseup', () => { drag = false; });
+  document.addEventListener('mouseup', () => {
+    if (drag && moved) {
+      const r = w.getBoundingClientRect();
+      chrome.storage.local.set({
+        [WIDGET_POS_KEY]: { left: Math.round(r.left), top: Math.round(r.top) }
+      });
+    }
+    drag = false;
+  });
 
   // 포커스
   setTimeout(() => document.getElementById('nui-input')?.focus(), 100);
+  return w;
+}
+
+// 아이콘 클릭 → 토글 (열기/닫기). 열림 상태를 storage에 기록.
+function injectFloatingWidget() {
+  injectStyles();
+  if (document.getElementById('nui-widget')) {
+    // 이미 있으면 토글 (닫기) → 진행 중 목표도 취소
+    stopGoal();
+    document.getElementById('nui-widget').remove();
+    chrome.storage.local.set({ [WIDGET_OPEN_KEY]: false });
+    return;
+  }
+  buildWidget();
+  chrome.storage.local.set({ [WIDGET_OPEN_KEY]: true });
+}
+
+// 위젯이 없으면 생성 (토글하지 않음). 페이지 전환 복원/도착 후 재노출에 사용.
+function ensureWidget() {
+  if (document.getElementById('nui-widget')) return;
+  injectStyles();
+  buildWidget();
+  chrome.storage.local.set({ [WIDGET_OPEN_KEY]: true });
 }
 
 function setWidgetState(state) {
@@ -804,31 +976,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // ══════════════════════════════════════════════════════════════
 (async function tryResumeGuide() {
   try {
-    const data = await chrome.storage.local.get('nextui_last_guide');
-    const saved = data?.nextui_last_guide;
-    if (!saved || !Array.isArray(saved.sequence)) return;
-    // 5분 초과면 만료 처리
-    if (Date.now() - (saved.ts || 0) > 5 * 60 * 1000) {
-      chrome.storage.local.remove('nextui_last_guide');
-      return;
-    }
+    const data = await chrome.storage.local.get([GOAL_KEY, WIDGET_OPEN_KEY]);
+    const widgetOpen = data?.[WIDGET_OPEN_KEY];
+    const goalObj = data?.[GOAL_KEY];
+
     // 페이지 로드 완료 대기
     if (document.readyState !== 'complete') {
       await new Promise(r => window.addEventListener('load', r, { once: true }));
     }
-    await sleep(600);
 
-    // 마지막 클릭 후 페이지 전환 → 새 페이지에서 완료 처리
-    if (saved.stepIdx >= saved.sequence.length) {
-      guide = { active: true, sequence: saved.sequence, stepIdx: saved.stepIdx, timer: null, clickTarget: null, clickHandler: null };
-      console.log('[NUI] 목적지 도착 (페이지 전환 후)');
-      finishGuide();
+    // ── 위젯 복원 ──
+    // 위젯이 열려 있던 상태라면 리로드/페이지 전환 후에도 다시 띄운다.
+    // (사용자가 ×로 닫았으면 widgetOpen=false → 복원하지 않음)
+    if (widgetOpen) ensureWidget();
+
+    // 진행 중인 목표가 없으면 위젯만 복원하고 종료
+    if (!goalObj || !goalObj.goal) return;
+    // 목표 만료 처리 (10분)
+    if (Date.now() - (goalObj.ts || 0) > GOAL_TTL) {
+      chrome.storage.local.remove(GOAL_KEY);
       return;
     }
 
-    guide = { active: true, sequence: saved.sequence, stepIdx: saved.stepIdx, timer: null, clickTarget: null, clickHandler: null };
-    console.log('[NUI] 재개:', saved.stepIdx + 1, '/', saved.sequence.length);
-    runStep(saved.stepIdx);
+    // 새 페이지가 안정화되도록 잠시 대기 후, 목표 기준으로 다시 계획.
+    // → 한 번의 프롬프트로 검색 → 결과 → 상품 → 장바구니까지 자동으로 이어진다.
+    await sleep(800);
+    goalReplans = 0;
+    console.log('[NUI] 목표 이어서 진행:', goalObj.goal);
+    planAndRun(goalObj.goal);
   } catch (e) {
     console.warn('[NUI] resume failed:', e);
   }

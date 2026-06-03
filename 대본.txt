@@ -1,5 +1,5 @@
 ==================================================================
- Ieum 시연영상 — 대본 (어느 화면에서 무슨 말)
+ Step Guide 시연영상 — 대본 (어느 화면에서 무슨 말)
 ==================================================================
  - 아래 영어 문장이 실제로 말할 나레이션입니다.
  - 🎤 표시는 시연 중 익스텐션 마이크에 말하는 한국어입니다.
@@ -44,7 +44,7 @@
 [화면 3] install.html
 
    "She confirms, pins it to the toolbar, and enters the key once.
-    About thirty seconds later, the Ieum icon is sitting right
+    About thirty seconds later, the Step Guide icon is sitting right
     there, ready on any website she visits."
 
 
@@ -52,7 +52,7 @@
 
    "Her first stop is the National Tax Service - the office that
     would actually know. But the site is buried in menus and tax
-    words she's never seen. So she just clicks the Ieum icon and
+    words she's never seen. So she just clicks the Step Guide icon and
     asks, in plain language -"
 
        🎤  "양도소득세 대상인가요?"
@@ -83,7 +83,7 @@
 
    "One question led to another, across two sites Sunja had never
     understood - and the same guide carried her through both,
-    without ever getting lost. That's Ieum: making the complex web
+    without ever getting lost. That's Step Guide: making the complex web
     easy for everyone. Thank you."
 
 
