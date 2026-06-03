@@ -84,7 +84,13 @@ async function handleGeminiAnalysis(userPrompt, domStructure, history, lastMiss)
 - 드롭다운(tag:"select") → action:"select".
   · value 는 options 중 목표에 맞는 옵션 텍스트 그대로 (예: value:"외손주").
   · message 예: "증여자와의 관계에서 '외손주'를 선택하세요"
-- 검색의 경우: [type(검색어) → click(검색 버튼)] 순서로.
+- ★★ 옆에 "조회/찾기/선택" 버튼(lookup)이 있는 필드(예: "증여자와의 관계")는 "직접 입력하지 말고"
+   그 '조회' 버튼을 action:"click" 하세요. (글자가 쳐지는 것처럼 보여도 실제로는 조회로 골라야 함)
+   readOnly:true 필드도 마찬가지로 type 금지 → 옆 버튼을 click.
+   (버튼을 누르면 팝업/목록이 열리고, 다음 호출 때 항목을 선택하도록 안내하게 됩니다.)
+   · message 예: "'조회' 버튼을 눌러 관계를 선택하세요"
+   · 이런 필드에 type 을 보내면 입력이 안 되고 오류가 납니다. 반드시 click 으로 처리하세요.
+- "검색"창(입력 가능한 자유 텍스트 검색)은 예외: [type(검색어) → click(검색 버튼)] 순서로.
 
 핵심 규칙:
 - ★ "지금까지 완료한 동작" 목록을 반드시 참고하세요. 이미 한 동작(특히 같은 검색)을 절대 반복하지 마세요.

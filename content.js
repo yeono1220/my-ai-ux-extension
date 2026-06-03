@@ -74,6 +74,12 @@ function getAllElements() {
       };
       if (label) obj.label = label.substring(0, 40);            // 연결된 라벨 (필드 식별용)
       if (tag === 'select') obj.options = getSelectOptions(el);  // 선택지 목록
+      // 직접 입력 불가(readonly/disabled) + 옆 조회/검색 버튼이 있는 "선택형" 필드 표시
+      if (isField && tag !== 'select') {
+        if (el.readOnly || el.disabled) obj.readOnly = true;
+        const lb = findNearbyLookupButton(el);
+        if (lb) obj.lookup = (lb.textContent || lb.value || '조회').trim();
+      }
       return obj;
     })
     .filter(Boolean);
@@ -124,15 +130,34 @@ function getSelectOptions(el) {
 // 입력칸 근처에 "조회/검색/찾기/선택" 버튼이 있으면 반환 (= 팝업으로 채우는 lookup 필드)
 function findNearbyLookupButton(el) {
   try {
-    const re = /조회|검색|찾기|선택/;
-    const scope = (el.closest && el.closest('td,th,tr,li,dd,.form-group,div,p')) || el.parentElement;
-    if (!scope) return null;
-    const cands = Array.from(scope.querySelectorAll('button,a,input[type="button"],input[type="submit"],[role="button"]'));
+    const re = /조회|검색|찾기|선택|돋보기/;
+    const ir = el.getBoundingClientRect();
+    if (ir.width <= 0 && ir.height <= 0) return null;
+
+    // 입력칸에서 위로 몇 단계 조상까지 넓혀 후보를 모은 뒤, "같은 줄·오른쪽 근처"를 위치로 고른다.
+    let scope = el;
+    for (let up = 0; up < 6 && scope.parentElement; up++) scope = scope.parentElement;
+    scope = scope || document.body;
+    const cands = Array.from(scope.querySelectorAll(
+      'button,a,input[type="button"],input[type="submit"],input[type="image"],[role="button"],span[onclick],img[onclick]'
+    ));
+
+    let best = null, bestDist = Infinity;
     for (const b of cands) {
-      const t = (b.textContent || b.value || '').trim();
+      if (b === el) continue;
+      const t = (b.textContent || b.value || (b.getAttribute && (b.getAttribute('aria-label') || b.getAttribute('title') || b.getAttribute('alt'))) || '').trim();
+      if (!t || !re.test(t)) continue;
       const r = b.getBoundingClientRect();
-      if (t && re.test(t) && r.width > 0 && r.height > 0) return b;
+      if (r.width <= 0 || r.height <= 0) continue;
+      // 같은 줄(세로로 겹침) + 입력칸 오른쪽 가까이(또는 살짝 겹침)
+      const sameRow = Math.abs(r.top - ir.top) < Math.max(ir.height, r.height) * 1.6;
+      if (!sameRow) continue;
+      const dx = r.left - ir.right;            // 입력칸 오른쪽 끝으로부터의 거리
+      if (dx < -ir.width || dx > 220) continue; // 너무 멀면 다른 칸의 버튼 → 제외
+      const dist = Math.abs(dx);
+      if (dist < bestDist) { bestDist = dist; best = b; }
     }
+    return best;
   } catch {}
   return null;
 }
@@ -453,6 +478,36 @@ async function runStep(idx) {
     // 근처에 "조회/검색/찾기/선택" 버튼이 있으면 = 직접 입력이 아니라 팝업으로 선택하는 필드
     const lookupBtn = findNearbyLookupButton(target);
     const lookupName = lookupBtn ? (lookupBtn.textContent || lookupBtn.value || '조회').trim() : '';
+    // "조회/찾기/선택" 버튼 = 눌러서 목록에서 고르는 필드(관계 등). "검색"은 보통 타이핑 후 검색.
+    const isLookupStyle = !!lookupName && /조회|찾기|선택/.test(lookupName);
+
+    // ★ 직접 입력 불가(readonly) 이거나, 옆 버튼이 "조회/찾기/선택"형이면:
+    //   입력시키지 말고 "그 버튼을 누르도록" 안내한다 (눌러서 팝업/목록에서 선택 → 자동 재계획).
+    //   (관계 칸처럼 글자가 쳐지는 것처럼 보여도 실제로는 조회로 골라야 하는 경우 포함)
+    if (!isSelect && lookupBtn && (target.readOnly || target.disabled || isLookupStyle)) {
+      const msg = step.message ||
+        `${term ? `'${term}' 선택을 위해 ` : ''}'${lookupName}' 버튼을 누르세요`;
+      highlightTarget(lookupBtn, msg, idx + 1, guide.sequence.length);
+      const onLookupClick = (ev) => {
+        if (!guide.active) return;
+        const path = ev.composedPath ? ev.composedPath() : [];
+        const inside = path.includes(lookupBtn) || lookupBtn.contains(ev.target);
+        if (inside) {
+          document.removeEventListener('click', onLookupClick, true);
+          guide.clickHandler = null; guide.clickTarget = null;
+          clearHighlight();
+          advanceAfterAction(idx);   // 팝업 열림/화면 변화 → DOM 다시 읽어 선택 안내
+        } else {
+          const interactive = ev.target && ev.target.closest &&
+            ev.target.closest('a,button,input,select,textarea,summary,label,[role="button"],[onclick]');
+          if (!interactive) { stopGoal(); showNotice('안내를 중단했어요.'); }
+        }
+      };
+      guide.clickTarget = lookupBtn;
+      guide.clickHandler = onLookupClick;
+      document.addEventListener('click', onLookupClick, true);
+      return;
+    }
     const defMsg = isSelect
       ? (term ? `'${term}' 을(를) 선택하세요` : '항목을 선택하세요')
       : (lookupName
@@ -580,7 +635,11 @@ function advanceAfterAction(idx) {
     // 새 탭이 열려 사용자가 그쪽으로 이동한 경우: 이 탭은 백그라운드(hidden)가 됨.
     // 이때 이 탭에서 재계획하면 새 탭과 충돌("삑")하므로 진행하지 않는다.
     // 새 탭은 공유 storage의 목표/위젯을 읽어 스스로 이어받는다.
-    if (document.hidden || document.visibilityState === 'hidden') return;
+    if (document.hidden || document.visibilityState === 'hidden') {
+      // 새 탭/팝업창으로 이동함 → 이 탭은 멈추고, 돌아오면(아래 visibilitychange) 다시 계획.
+      awaitingReturn = true;
+      return;
+    }
     if (!guide.active) return;
     if (moreSteps) {
       resetActionGuard();               // 같은 페이지에서 진전 → 카운터 리셋
@@ -589,6 +648,23 @@ function advanceAfterAction(idx) {
       replanSamePage();             // 같은 페이지 계획 소진 → 목표 기준 재계획
     }
   }, 800);
+}
+
+// 팝업창/새 탭에서 돌아왔을 때(이 탭이 다시 보이게 됨) 목표 기준으로 다시 계획.
+// (조회 팝업이 별도 창으로 열렸다가 선택 후 닫혀 부모 화면으로 돌아오는 경우 대응)
+let awaitingReturn = false;
+let visResumeBound = false;
+function setupVisibilityResume() {
+  if (visResumeBound) return;
+  visResumeBound = true;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden || !awaitingReturn) return;
+    awaitingReturn = false;
+    chrome.storage.local.get(GOAL_KEY, (d) => {
+      const g = d?.[GOAL_KEY];
+      if (g && g.goal) setTimeout(() => { if (!document.hidden) planAndRun(g.goal); }, 500);
+    });
+  });
 }
 
 async function waitForTarget(selector, textHint, maxMs) {
@@ -965,6 +1041,7 @@ function showNotice(msg, ms) {
 // ══════════════════════════════════════════════════════════════
 // 위젯 DOM 생성 (토글 없음). 저장된 위치/입력 초안을 복원한다.
 function buildWidget() {
+  setupVisibilityResume();   // 팝업창 복귀 시 자동 재계획 리스너 등록(1회)
   const w = document.createElement('div'); w.id = 'nui-widget';
   w.innerHTML = `
     <span class="wi">✦</span>
