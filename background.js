@@ -47,6 +47,10 @@ async function handleGeminiAnalysis(userPrompt, domStructure, history, lastMiss)
    - ★ "지금까지 완료한 동작"을 보고, 목표에 필요한 단계를 다 했으면 done. 더 짜내지 마세요.
    - ★ 결과가 이미 보이는데 "인쇄/다시계산/목록/처음으로" 같은 부가 버튼을 누르라고 하지 마세요. 그냥 done.
 2) 아직이면 → "status":"continue" 와 함께, 아래 "행동 우선순위"에 따라 "꼭 필요한" 다음 동작 1개만 고르세요.
+3) ★ 확실하지 않으면 "추측하지 말고" 멈추세요 → "status":"unclear", "clickSequence":[], "message":"<사용자에게 물어볼 말>".
+   - 이런 경우: 목표가 모호함 / 현재 화면에서 목표와 명확히 관련된 요소를 못 찾음 / 어떤 걸 눌러야 할지 자신 없음.
+   - 절대 "그럴듯해 보이는" 요소를 찍어서 안내하지 마세요. 잘못 안내하느니 멈추고 물어보는 게 낫습니다.
+   - message 예: "어떤 세금을 계산할지 알려주세요" / "원하시는 메뉴 이름을 더 자세히 말씀해 주세요".
 
 ★★★ 다음 동작 선택 — 반드시 이 우선순위대로 (위에서부터 해당되면 즉시 선택, 아래로 내려가지 말 것):
   (1) 목표 화면/결과가 "이미 화면에 링크/버튼으로 보이면" → 그것을 클릭. (최우선!)
@@ -103,9 +107,11 @@ async function handleGeminiAnalysis(userPrompt, domStructure, history, lastMiss)
 - 목표가 달성되면(예: 계산 결과/세액이 화면에 표시됨) "status":"done", "clickSequence":[] 로 응답하세요.
 - 보통 현재 페이지의 단계는 1~4개면 충분합니다. 확실한 것만 넣으세요.
 
+status 값은 "continue" | "done" | "unclear" 중 하나입니다.
 반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트 절대 금지:
 {
   "status": "continue",
+  "message": "(unclear일 때만 사용: 사용자에게 물어볼 말)",
   "clickSequence": [
     { "action": "click",  "selector": "<셀렉터>", "text": "<텍스트>", "message": "<안내>" },
     { "action": "select", "selector": "<select 셀렉터>", "value": "<옵션>", "text": "<텍스트>", "message": "<안내>" },

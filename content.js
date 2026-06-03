@@ -311,11 +311,19 @@ function injectStyles() {
     }
     #nui-widget:active { cursor: grabbing; }
     #nui-widget .wi   { font-size:15px; color:#00d4ff; flex-shrink:0; }
-    #nui-widget input {
-      flex:1; background:transparent; border:none; outline:none;
-      color:#e8f4ff; font-size:14px; caret-color:#00d4ff;
+    /* 호스트 페이지의 전역 input 스타일이 새어들지 않도록 !important로 격리 */
+    #nui-widget input#nui-input {
+      flex:1 1 auto !important;
+      box-sizing:border-box !important;
+      width:auto !important; min-width:0 !important; height:auto !important;
+      background:transparent !important; border:none !important; outline:none !important;
+      box-shadow:none !important; border-radius:0 !important;
+      margin:0 !important; padding:0 !important;
+      color:#e8f4ff !important; font-size:14px !important; line-height:1.4 !important;
+      font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+      caret-color:#00d4ff !important; text-align:left !important;
     }
-    #nui-widget input::placeholder { color:rgba(255,255,255,0.25); }
+    #nui-widget input#nui-input::placeholder { color:rgba(255,255,255,0.25) !important; }
     #nui-widget .wb {
       background: linear-gradient(135deg, #006e8c, #00d4ff);
       border:none; border-radius:22px; padding:7px 16px;
@@ -544,8 +552,8 @@ async function runStep(idx) {
         console.log('[NUI] 타겟 외 버튼/링크 클릭 — 목표 유지');
       } else {
         console.log('[NUI] 배경 클릭 — 안내 중단');
-        stopGoal();
-        clearHighlight();
+        stopGoal();          // 목표 취소 + 시각요소 정리
+        showNotice('안내를 중단했어요.');
       }
     }
   };
@@ -685,24 +693,6 @@ function finishGoal() {
   showArrivalBanner();
 }
 
-function renderArrivedRoadmap() {
-  if (!guide.sequence || guide.sequence.length === 0) return;
-  injectStyles();
-  document.getElementById('nui-roadmap')?.remove();
-  const c = document.createElement('div'); c.id = 'nui-roadmap';
-  c.innerHTML = '<div class="rm-title">클릭 순서</div>';
-  guide.sequence.forEach((step, i) => {
-    const isLast = i === guide.sequence.length - 1;
-    const cls = isLast ? 'curr arrived' : 'done';
-    const d = document.createElement('div');
-    d.className = `rm-step ${cls}`;
-    const label = step.text || (step.action === 'type' || step.action === 'fill' ? `검색: ${step.value || ''}` : step.message) || '단계';
-    d.innerHTML = `<div class="dot"></div><span>${label}</span>`;
-    c.appendChild(d);
-  });
-  document.body.appendChild(c);
-}
-
 function showArrivalBanner() {
   document.getElementById('nui-toast')?.remove();
   document.getElementById('nui-arrival')?.remove();
@@ -800,21 +790,6 @@ function showCountdown(ms) {
 // ══════════════════════════════════════════════════════════════
 // 5. 로드맵
 // ══════════════════════════════════════════════════════════════
-function renderRoadmap(currIdx) {
-  injectStyles();
-  document.getElementById('nui-roadmap')?.remove();
-  const c = document.createElement('div'); c.id = 'nui-roadmap';
-  c.innerHTML = '<div class="rm-title">클릭 순서</div>';
-  guide.sequence.forEach((step, i) => {
-    const cls = i < currIdx ? 'done' : i === currIdx ? 'curr' : '';
-    const d = document.createElement('div');
-    d.className = `rm-step ${cls}`;
-    const label = step.text || (step.action === 'type' || step.action === 'fill' ? `검색: ${step.value || ''}` : step.message) || '단계';
-    d.innerHTML = `<div class="dot"></div><span>${label}</span>`;
-    c.appendChild(d);
-  });
-  document.body.appendChild(c);
-}
 
 
 // ══════════════════════════════════════════════════════════════
@@ -875,6 +850,16 @@ function planAndRun(goal) {
           return;
         }
         const seq = Array.isArray(res.clickSequence) ? res.clickSequence : [];
+
+        // status가 'unclear' → 추측하지 말고 중단하고 추가 정보를 요청한다.
+        if (res.status === 'unclear') {
+          console.log('[NUI] 불명확 → 중단하고 추가 정보 요청');
+          stopGoal();
+          showNotice(res.message || '어디로 안내할지 명확하지 않아요.\n조금만 더 자세히 말씀해 주세요.', 4000);
+          ensureWidget();
+          return;
+        }
+
         // status가 'done'이거나 할 게 없으면 목표 달성으로 간주
         if (res.status === 'done' || seq.length === 0) {
           chrome.storage.local.set({ [GOAL_KEY]: { goal, ts: Date.now(), history } });
@@ -959,6 +944,21 @@ function showError(msg) {
   setTimeout(() => tip.remove(), 3000);
 }
 
+// 중립 안내 토스트 (중단/추가 정보 요청 등). 화면 중앙에 잠깐 표시.
+function showNotice(msg, ms) {
+  injectStyles();
+  document.getElementById('nui-tip')?.remove();
+  const d = document.createElement('div');
+  d.id = 'nui-tip';
+  d.innerHTML = `<div class="t-msg">${msg}</div>`;
+  d.style.top = '50%'; d.style.left = '50%';
+  d.style.transform = 'translate(-50%,-50%)';
+  d.style.textAlign = 'center';
+  d.style.whiteSpace = 'pre-line';   // \n 줄바꿈 표시
+  document.body.appendChild(d);
+  setTimeout(() => d.remove(), ms || 2600);
+}
+
 
 // ══════════════════════════════════════════════════════════════
 // 7. 플로팅 위젯
@@ -998,7 +998,11 @@ function buildWidget() {
 
   const doSend = () => {
     const p = input?.value.trim();
-    if (p) { chrome.storage.local.remove(WIDGET_DRAFT_KEY); startGuide(p); }
+    if (p) {
+      chrome.storage.local.remove(WIDGET_DRAFT_KEY);
+      if (input) input.value = '';   // 전송 후 입력창 자동 초기화
+      startGuide(p);
+    }
   };
   document.getElementById('nui-send').addEventListener('click', doSend);
   input.addEventListener('keydown', e => {
@@ -1054,6 +1058,11 @@ function injectFloatingWidget() {
     chrome.storage.local.set({ [WIDGET_OPEN_KEY]: false });
     return;
   }
+  // ★ 아이콘으로 "새로 열 때"마다 이전 대화(목표·메모리·입력 초안)를 초기화한다.
+  //   (페이지 이동 중 자동 복원은 ensureWidget을 쓰므로 여기서만 초기화 → 같은 작업은 안 끊김)
+  stopGoal();                                              // 진행 중 목표/시각요소 정리
+  resetActionGuard();
+  chrome.storage.local.remove([GOAL_KEY, WIDGET_DRAFT_KEY]); // 이전 목표/메모리/초안 제거 (위치는 유지)
   buildWidget();
   chrome.storage.local.set({ [WIDGET_OPEN_KEY]: true });
 }
