@@ -41,41 +41,47 @@ async function handleGeminiAnalysis(userPrompt, domStructure) {
 
 먼저 판단하세요:
 1) 목표가 현재 페이지에서 이미 달성되었는가?
-   - 예: 상품이 장바구니에 담겼고 그 확인 화면/장바구니 페이지가 보임
+   - 예: 상품이 장바구니에 담김 / 계산 결과·세액이 화면에 표시됨 / 원하는 화면에 도착함
    - 달성됨 → "status":"done", "clickSequence":[]
 2) 아직 달성되지 않았다면 → "status":"continue" 와 함께,
-   현재 페이지에서 목표에 더 가까워지기 위해 클릭할 요소들을 순서대로.
+   현재 페이지에서 목표에 더 가까워지기 위해 클릭/입력/선택할 요소들을 순서대로.
 
-각 단계(clickSequence 항목)는 두 종류의 action을 가질 수 있습니다:
-- 클릭: { "action":"click", "selector":..., "text":<요소 텍스트>, "message":<안내> }
-- 입력: { "action":"type", "selector":<입력창 셀렉터>, "value":<입력할 검색어>, "text":<요소 텍스트>, "message":<안내> }
+각 단계(clickSequence 항목)는 세 종류의 action을 가질 수 있습니다:
+- 클릭:  { "action":"click",  "selector":..., "text":<요소 텍스트>, "message":<안내> }
+- 입력:  { "action":"type",   "selector":<입력칸 셀렉터>, "value":<입력할 값>, "text":..., "message":<안내> }
+- 선택:  { "action":"select", "selector":<select 셀렉터>, "value":<선택할 옵션 텍스트>, "text":..., "message":<안내> }
 
-검색이 필요할 때 (매우 중요):
-- 이 도우미는 자동으로 타이핑하지 않습니다. "사용자가 직접 입력하도록 안내"하는 방식입니다.
-- 1단계: DOM 목록에서 isTextInput:true 인 검색 입력창을 찾아 action:"type" 으로 안내하세요.
-  · value 에는 사용자 목표에서 뽑아낸 "검색어"만 넣으세요.
-    (예: 목표가 "가장 싼 휴대용 선풍기..." → value:"휴대용 선풍기")
-  · message 는 "검색창에 '휴대용 선풍기' 라고 입력하세요" 형식으로 작성하세요.
-- 2단계: 그 다음에 검색 버튼(또는 돋보기 아이콘)을 action:"click" 으로 안내하세요.
-  · message 는 "검색 버튼을 누르세요" 형식.
-- 즉 검색은 보통 [type 1개 + click 1개] 두 단계로 구성됩니다.
-- 입력창은 보통 tag:"input" 이고 placeholder(예: "찾고 싶은 상품을...")가 text에 들어 있습니다.
+★ 이 도우미는 자동으로 타이핑/선택하지 않습니다. "사용자가 직접 입력·선택하도록 안내"하는 방식입니다.
+  (사용자가 값을 다 채우면 자동으로 다음 단계로 넘어갑니다.)
+
+입력/선택이 필요할 때 (매우 중요):
+- DOM 목록에서 isTextInput:true 인 폼 필드를 사용하세요. 각 필드에는 label(연결된 라벨, 예 "증여자와의 관계",
+  "재산가액")과, select 의 경우 options(선택지 목록)가 함께 제공됩니다. 이 label/options 로 올바른 필드를 고르세요.
+- 텍스트/숫자 칸(tag:"input", "textarea") → action:"type".
+  · value 에는 넣을 값만. 숫자는 쉼표 없이 (예: 1억 → value:"100000000").
+  · message 예: "재산가액 칸에 100000000 을 입력하세요"
+- 드롭다운(tag:"select") → action:"select".
+  · value 는 options 중 목표에 맞는 옵션 텍스트 그대로 (예: value:"외손주").
+  · message 예: "증여자와의 관계에서 '외손주'를 선택하세요"
+- 검색의 경우: [type(검색어) → click(검색 버튼)] 순서로.
 
 핵심 규칙:
 - 현재 페이지에 실제로 보이는 요소만 사용하세요. 다음 페이지의 요소는 추측하지 마세요.
-- "가장 싼", "최저가" 같은 조건이면 가격 정렬(낮은 가격순) 버튼을 우선 클릭하거나,
-  목록에서 가장 저렴해 보이는 상품을 선택하세요.
+- 여러 입력이 필요하면 한 번에 여러 type/select 단계를 순서대로 넣고, 마지막에 실행/계산/확인 버튼을 click 으로.
+- "가장 싼", "최저가" 같은 조건이면 가격 정렬 버튼을 클릭하거나 가장 저렴한 항목을 선택하세요.
 - 숨겨진 메뉴(wasHidden: true) 안에 목적지가 있다면, 그 메뉴를 여는 상위 요소부터 포함하세요.
-- selector는 DOM 요소 목록의 selector 필드를 그대로 사용하세요.
-- message는 짧은 한국어 안내문입니다. (클릭: "~을 클릭하세요", 입력: "~을 검색합니다")
-- 보통 현재 페이지의 단계는 1~3개면 충분합니다. 확실한 것만 넣으세요.
+- selector 는 DOM 요소 목록의 selector 필드를 그대로 사용하세요.
+- message 는 짧고 명확한 한국어 안내문입니다.
+- 목표가 달성되면(예: 계산 결과/세액이 화면에 표시됨) "status":"done", "clickSequence":[] 로 응답하세요.
+- 보통 현재 페이지의 단계는 1~4개면 충분합니다. 확실한 것만 넣으세요.
 
 반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트 절대 금지:
 {
   "status": "continue",
   "clickSequence": [
-    { "action": "type", "selector": "<입력창 셀렉터>", "value": "<검색어>", "text": "<요소 텍스트>", "message": "<안내 메시지>" },
-    { "action": "click", "selector": "<CSS 셀렉터>", "text": "<요소 텍스트>", "message": "<안내 메시지>" }
+    { "action": "click",  "selector": "<셀렉터>", "text": "<텍스트>", "message": "<안내>" },
+    { "action": "select", "selector": "<select 셀렉터>", "value": "<옵션>", "text": "<텍스트>", "message": "<안내>" },
+    { "action": "type",   "selector": "<입력칸 셀렉터>", "value": "<값>", "text": "<텍스트>", "message": "<안내>" }
   ]
 }
   `.trim();

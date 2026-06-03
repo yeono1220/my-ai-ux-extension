@@ -30,8 +30,9 @@ function getAllElements() {
     'a','button',
     '[role="button"]','[role="menuitem"]','[role="tab"]','[role="option"]',
     'input[type="button"]','input[type="submit"]','input[type="reset"]',
-    // 검색어 입력용 텍스트 입력칸 (type 액션 대상)
-    'input[type="text"]','input[type="search"]','input:not([type])','textarea',
+    // 입력/선택 폼 필드 (type/select 액션 대상)
+    'input[type="text"]','input[type="search"]','input[type="number"]','input[type="tel"]',
+    'input:not([type])','textarea','select',
     'input[name*="search" i]','input[id*="search" i]','input[class*="search" i]',
     'input[placeholder]',
     'summary','nav li a','.gnb a','.lnb a',
@@ -41,27 +42,31 @@ function getAllElements() {
   const seen = new Set();
   return Array.from(document.querySelectorAll(sel))
     .map((el, i) => {
-      const text = getElText(el);
+      const tag  = el.tagName.toLowerCase();
+      // 입력/선택 가능한 폼 필드인지 (AI가 type/select 액션 대상으로 고를 수 있게)
+      const isField = tag === 'textarea' || tag === 'select' ||
+        (tag === 'input' && !['button','submit','reset','checkbox','radio','hidden'].includes((el.getAttribute('type') || 'text').toLowerCase()));
+      const label = isField ? getFieldLabel(el) : '';
+      const text = getElText(el) || label;
       if (!text) return null;
       const s = getUniqueSelector(el);
       if (seen.has(s)) return null;
       seen.add(s);
       const rect = el.getBoundingClientRect();
       const cs   = window.getComputedStyle(el);
-      const tag  = el.tagName.toLowerCase();
-      // 입력 가능한 요소인지 표시 (AI가 type 액션 대상으로 고를 수 있게)
-      const isInput = tag === 'textarea' ||
-        (tag === 'input' && !['button','submit','reset','checkbox','radio','hidden'].includes((el.getAttribute('type') || 'text').toLowerCase()));
-      return {
+      const obj = {
         index: i, tag, text: text.substring(0, 60),
         id: el.id || '', selector: s, href: typeof el.href === 'string' ? el.href : '',
         inputType: el.getAttribute ? (el.getAttribute('type') || '') : '',
-        isTextInput: isInput,
+        isTextInput: isField,
         isVisible: rect.width > 0 && rect.height > 0,
         wasHidden: cs.display === 'none' || cs.visibility === 'hidden',
         location: { x: Math.round(rect.left), y: Math.round(rect.top) },
         size:     { width: Math.round(rect.width), height: Math.round(rect.height) },
       };
+      if (label) obj.label = label.substring(0, 40);            // 연결된 라벨 (필드 식별용)
+      if (tag === 'select') obj.options = getSelectOptions(el);  // 선택지 목록
+      return obj;
     })
     .filter(Boolean).slice(0, 200);
 }
@@ -74,6 +79,31 @@ function getElText(el) {
          el.getAttribute?.('placeholder')?.trim() ||
          val ||
          el.getAttribute?.('name')?.trim() || '';
+}
+
+// 폼 필드에 연결된 라벨 텍스트 (예: "증여자와의 관계", "재산가액") — AI의 필드 식별을 돕는다
+function getFieldLabel(el) {
+  try {
+    if (el.id) {
+      const lab = document.querySelector(`label[for="${CSS.escape(el.id)}"]`);
+      if (lab && lab.textContent.trim()) return lab.textContent.trim();
+    }
+    const wrap = el.closest && el.closest('label');
+    if (wrap && wrap.textContent.trim()) return wrap.textContent.trim();
+    const aria = el.getAttribute && el.getAttribute('aria-label');
+    if (aria && aria.trim()) return aria.trim();
+    const ph = el.getAttribute && el.getAttribute('placeholder');
+    if (ph && ph.trim()) return ph.trim();
+  } catch {}
+  return '';
+}
+
+// select 의 선택지 텍스트 목록 (AI가 어떤 옵션을 고를지 판단)
+function getSelectOptions(el) {
+  try {
+    return Array.from(el.options || []).map(o => (o.textContent || o.value || '').trim())
+      .filter(Boolean).slice(0, 30);
+  } catch { return []; }
 }
 
 function getUniqueSelector(el) {
@@ -372,18 +402,28 @@ async function runStep(idx) {
     return;
   }
 
-  // ── 입력(type) 액션: 사용자가 직접 입력하도록 유도 (자동 입력 X) ──
-  // 검색창을 스포트라이트하고 "○○○를 입력하세요"라고 안내한 뒤,
-  // 사용자가 그 검색어를 입력하면 다음 단계(검색 버튼 클릭)로 넘어간다.
-  if (step.action === 'type' || step.action === 'fill') {
+  // ── 입력/선택(type/select) 액션: 사용자가 직접 입력·선택하도록 유도 (자동 입력 X) ──
+  // 대상 필드를 스포트라이트하고 "○○○를 입력/선택하세요" 안내 → 사용자가 값을 채우면
+  // (input/change 감지) 다음 단계로 넘어간다. 텍스트칸·숫자칸·드롭다운(select) 모두 지원.
+  if (step.action === 'type' || step.action === 'fill' || step.action === 'select') {
     const term = step.value || '';
-    const msg = step.message || (term ? `검색창에 '${term}' 라고 입력하세요` : '검색창에 검색어를 입력하세요');
-    highlightTarget(target, msg, idx + 1, guide.sequence.length);
+    const isSelect = target.tagName === 'SELECT';
+    const defMsg = isSelect
+      ? (term ? `'${term}' 을(를) 선택하세요` : '항목을 선택하세요')
+      : (term ? `'${term}' 라고 입력하세요`   : '내용을 입력하세요');
+    highlightTarget(target, step.message || defMsg, idx + 1, guide.sequence.length);
     try { target.focus(); } catch {}
 
-    // 공백 차이를 무시하고 비교 (예: "휴대용 선풍기" vs "휴대용선풍기")
-    const squash = (x) => nrm(x).replace(/\s+/g, '');
+    // 공백·쉼표 등 기호 무시 비교 ("100,000,000" ≈ "100000000", "휴대용 선풍기" ≈ "휴대용선풍기")
+    const squash = (x) => nrm(x).replace(/[^0-9a-z가-힣]/g, '');
     const expect = squash(term);
+    const currentVal = () => {
+      if (isSelect) {
+        const opt = target.options && target.options[target.selectedIndex];
+        return squash(opt ? (opt.textContent || opt.value) : '');
+      }
+      return squash(typeof target.value === 'string' ? target.value : '');
+    };
 
     const goNext = () => {
       if (guide.cleanup) { guide.cleanup(); guide.cleanup = null; }
@@ -393,23 +433,25 @@ async function runStep(idx) {
       else { replanSamePage(); }
     };
 
-    const onInput = () => {
+    const check = () => {
       if (!guide.active) return;
-      const cur = squash(target.value);
-      const matched = expect ? cur.includes(expect) : (target.value || '').trim().length > 0;
-      if (matched) goNext();          // 기대 검색어를 다 입력함 → 다음 단계 안내
+      const cur = currentVal();
+      const matched = expect ? cur.includes(expect) : cur.length > 0;
+      if (matched) goNext();          // 기대값을 다 입력/선택함 → 다음 단계 안내
     };
     const onKey = (e) => {
-      if (e.key !== 'Enter') return;  // 엔터로 바로 진행/검색
+      if (e.key !== 'Enter') return;  // 엔터로 바로 진행 (검색 제출 등)
       if (guide.cleanup) { guide.cleanup(); guide.cleanup = null; }
       clearHighlight();
-      advanceAfterAction(idx);        // 엔터가 검색 제출→전환이면 새 페이지 resume이 이어받음
+      advanceAfterAction(idx);
     };
 
-    target.addEventListener('input', onInput);
-    target.addEventListener('keydown', onKey);
+    target.addEventListener('input',  check);
+    target.addEventListener('change', check);
+    if (!isSelect) target.addEventListener('keydown', onKey);
     guide.cleanup = () => {
-      target.removeEventListener('input', onInput);
+      target.removeEventListener('input',  check);
+      target.removeEventListener('change', check);
       target.removeEventListener('keydown', onKey);
     };
     return;
@@ -495,7 +537,7 @@ function findTarget(selector, textHint) {
   const hint = nrm(textHint);
   if (!hint) return null;
 
-  const SEL = 'a,button,summary,[role="button"],[role="menuitem"],[role="tab"],[role="option"],[role="link"],[onclick],input[type="button"],input[type="submit"],input[type="reset"],input[type="text"],input[type="search"],input:not([type]),textarea';
+  const SEL = 'a,button,summary,[role="button"],[role="menuitem"],[role="tab"],[role="option"],[role="link"],[onclick],input[type="button"],input[type="submit"],input[type="reset"],input[type="text"],input[type="search"],input[type="number"],input[type="tel"],input:not([type]),textarea,select';
   const all = Array.from(document.querySelectorAll(SEL));
   const visible = all.filter(e => {
     const r = e.getBoundingClientRect();
