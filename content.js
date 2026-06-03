@@ -25,6 +25,9 @@ let lastActionKey   = '';
 let sameActionCount = 0;
 function actionKey(s) { return `${s?.action || 'click'}|${s?.selector || ''}|${s?.value || ''}`; }
 function resetActionGuard() { lastActionKey = ''; sameActionCount = 0; }
+// 진행 중이던 AI 응답이 "중단/닫기 이후"에 뒤늦게 화면을 그리는 것을 막는 토큰.
+// 새 계획 시작·중단 때 값을 올려서, 옛 콜백이 자기 토큰과 다르면 무시하게 한다.
+let planToken = 0;
 
 
 // ══════════════════════════════════════════════════════════════
@@ -418,7 +421,6 @@ async function runStep(idx) {
   if (idx >= guide.sequence.length) { replanSamePage(); return; }
   const step = guide.sequence[idx];
   guide.stepIdx = idx;
-  renderRoadmap(idx);
 
   // UI가 1클릭 후 동적으로 변하는 경우 대비: 타겟이 나타날 때까지 폴링
   const target = await waitForTarget(step.selector, step.text, 5000);
@@ -532,13 +534,19 @@ async function runStep(idx) {
       clearHighlight();
       advanceAfterAction(idx);
     } else {
-      // 타겟이 아닌 곳을 클릭해도 "목표를 취소하지 않는다" (← 예전엔 여기서 stopGoal로
-      // 목표를 지워서 '검색은 되는데 이후 대응이 없는' 버그가 났음).
-      // AI가 잡은 타겟과 실제 누른 요소(버튼 속 아이콘/텍스트, 재렌더된 요소 등)가
-      // 다를 수 있다. 그 클릭이 페이지를 전환시키면 목표(GOAL_KEY)는 그대로 남아
-      // 새 페이지의 resume이 이어받는다. 전환이 없으면 현재 안내를 그대로 유지한다.
-      // (취소는 위젯의 × 버튼으로만)
-      console.log('[NUI] 타겟 외 클릭 — 안내/목표 유지');
+      // 타겟이 아닌 곳 클릭. 두 경우를 구분한다:
+      //  (a) "빈 배경"(버튼·링크·입력 등 상호작용 요소가 아님) 클릭 → 사용자가 중단을 원함 → 취소
+      //  (b) 다른 "버튼/링크" 클릭 → AI가 잡은 타겟과 실제 요소가 다를 수 있고, 그 클릭이
+      //      페이지를 전환시키면 목표가 그대로 이어받아야 함 → 취소하지 않고 유지
+      const interactive = ev.target && ev.target.closest &&
+        ev.target.closest('a,button,input,select,textarea,summary,label,[role="button"],[role="menuitem"],[role="tab"],[role="option"],[role="link"],[onclick]');
+      if (interactive) {
+        console.log('[NUI] 타겟 외 버튼/링크 클릭 — 목표 유지');
+      } else {
+        console.log('[NUI] 배경 클릭 — 안내 중단');
+        stopGoal();
+        clearHighlight();
+      }
     }
   };
   guide.clickTarget = target;
@@ -572,7 +580,7 @@ function advanceAfterAction(idx) {
     } else {
       replanSamePage();             // 같은 페이지 계획 소진 → 목표 기준 재계획
     }
-  }, 1200);
+  }, 800);
 }
 
 async function waitForTarget(selector, textHint, maxMs) {
@@ -673,9 +681,6 @@ function finishGoal() {
   // 위젯 유지: 목적지 도착 후에도 다음 질문 가능하도록
   ensureWidget();
 
-  // 로드맵을 도착 상태로 리렌더 (마지막 단계 highlighted)
-  renderArrivedRoadmap();
-
   // 가운데 큰 도착 배너 (어르신 가독성)
   showArrivalBanner();
 }
@@ -771,12 +776,12 @@ function highlightTarget(el, message, num, total) {
       tip.style.top  = `${top}px`;
       tip.style.left = `${left}px`;
     });
-  }, 350);
+  }, 150);
 }
 
 function clearHighlight() {
   document.querySelectorAll('.nui-target').forEach(el => el.classList.remove('nui-target'));
-  ['nui-overlay','nui-tip','nui-arrow','nui-bar'].forEach(id => document.getElementById(id)?.remove());
+  ['nui-overlay','nui-tip','nui-arrow','nui-bar','nui-roadmap'].forEach(id => document.getElementById(id)?.remove());
   clearTimeout(guide.timer);
 }
 
@@ -842,9 +847,11 @@ function planAndRun(goal) {
     guide.clickHandler = null; guide.clickTarget = null;
   }
   if (guide.cleanup) { try { guide.cleanup(); } catch {} guide.cleanup = null; }
+  const myToken = ++planToken;   // 이 계획 요청의 토큰 (중단/새 계획 시 무효화됨)
   setWidgetState('loading');
 
   chrome.storage.local.get(GOAL_KEY, (d) => {
+    if (myToken !== planToken) return;   // 이미 중단/교체됨 → 무시
     const g = d?.[GOAL_KEY] || {};
     let history = Array.isArray(g.history) ? g.history : [];
     // 이전 페이지에서 실행한 계획을 history(메모리)로 합친다.
@@ -860,6 +867,7 @@ function planAndRun(goal) {
     chrome.runtime.sendMessage(
       { action: 'ANALYZE_WITH_GEMINI', prompt: goal, history, lastMiss, domStructure: elements },
       res => {
+        if (myToken !== planToken) return;   // 중단/교체된 요청 → 화면 그리지 않음
         setWidgetState('idle');
         if (!res || res.error) {
           showError(res?.error || '분석 실패');
@@ -918,6 +926,7 @@ function replanSamePage() {
 // 진행 중인 안내(시각 요소)만 정리. 위젯과 목표(GOAL_KEY)는 건드리지 않는다.
 function stopGuide() {
   guide.active = false;
+  planToken++;   // 진행 중이던 AI 응답 콜백 무효화 (닫은 뒤 말풍선 갑툭튀 방지)
   if (guide.clickHandler) {
     document.removeEventListener('click', guide.clickHandler, true);
     guide.clickHandler = null;
