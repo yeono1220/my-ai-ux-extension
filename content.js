@@ -28,6 +28,12 @@ function resetActionGuard() { lastActionKey = ''; sameActionCount = 0; }
 // 진행 중이던 AI 응답이 "중단/닫기 이후"에 뒤늦게 화면을 그리는 것을 막는 토큰.
 // 새 계획 시작·중단 때 값을 올려서, 옛 콜백이 자기 토큰과 다르면 무시하게 한다.
 let planToken = 0;
+// 도착 배너 종료 타이머. finishGoal이 여러 번 불려도 타이머가 엇갈리지 않도록
+// 항상 "현재 보이는 배너" 하나에만 묶어 둔다 (배너·위젯이 같은 순간에 사라지게).
+let arrivalTimer = null;
+// 도착 완료 가드: finishGoal 이후 늦게 도착한 콜백이 말풍선을 다시 그리거나
+// 위젯을 재생성(ensureWidget)하는 것을 막는다. 새 질문(startGuide) 시 해제된다.
+let arrived = false;
 
 
 // ══════════════════════════════════════════════════════════════
@@ -73,6 +79,14 @@ function getAllElements() {
         size:     { width: Math.round(rect.width), height: Math.round(rect.height) },
       };
       if (label) obj.label = label.substring(0, 40);            // 연결된 라벨 (필드 식별용)
+      // 표/목록 행에 있는 '선택/조회'처럼 그 자체로는 구분이 안 되는 버튼에,
+      // 같은 행(tr/li)의 다른 셀 텍스트(예: '외손', '친손자')를 rowText로 실어준다.
+      // → AI가 "어느 행의 선택 버튼인지" 구분할 수 있게 됨.
+      const ownText = text.trim();
+      if (GENERIC_BTN_RE.test(ownText) || ownText.length <= 2) {
+        const ctx = getRowContext(el, ownText);
+        if (ctx && nrm(ctx) !== nrm(ownText)) obj.rowText = ctx.substring(0, 80);
+      }
       if (tag === 'select') obj.options = getSelectOptions(el);  // 선택지 목록
       // 직접 입력 불가(readonly/disabled) + 옆 조회/검색 버튼이 있는 "선택형" 필드 표시
       if (isField && tag !== 'select') {
@@ -125,6 +139,29 @@ function getSelectOptions(el) {
     return Array.from(el.options || []).map(o => (o.textContent || o.value || '').trim())
       .filter(Boolean).slice(0, 30);
   } catch { return []; }
+}
+
+// 그 자체로는 어느 항목인지 구분이 안 되는 "일반 동작 버튼" 라벨들.
+// 이런 버튼은 같은 행의 다른 셀 텍스트(rowText)로 구분해야 한다.
+const GENERIC_BTN_RE = /^(선택|선택완료|조회|찾기|신청|등록|보기|상세|확인|적용|추가|삭제|수정|선택하기)$/;
+
+// 버튼이 속한 표/목록 "행 전체의 텍스트"를 모은다 (버튼 자신은 제외하고 구분 정보가 있을 때만).
+// 예: <tr><td>외손</td><td><a>선택</a></td></tr> → "외손 선택" 반환 → AI가 '외손' 행임을 안다.
+function getRowContext(el, ownText) {
+  try {
+    const row = el.closest('tr,[role="row"],li');
+    if (!row) return '';
+    const cells = row.querySelectorAll('td,th,[role="cell"],[role="gridcell"]');
+    let txt = cells.length
+      ? Array.from(cells).map(c => (c.innerText || c.textContent || '').trim()).filter(Boolean).join(' ')
+      : (row.innerText || row.textContent || '').trim();
+    txt = txt.replace(/\s+/g, ' ').trim();
+    // 행에 버튼 글자 말고 다른 구분 텍스트가 있어야 의미가 있다.
+    const stripped = txt.replace(ownText, '').trim();
+    if (!stripped) return '';
+    return txt;
+  } catch {}
+  return '';
 }
 
 // 입력칸 근처에 "조회/검색/찾기/선택" 버튼이 있으면 반환 (= 팝업으로 채우는 lookup 필드)
@@ -195,8 +232,8 @@ function injectStyles() {
 
     /* ── 버튼 강조 글로우 ── */
     .nui-target {
-      position:relative !important;
-      z-index:999999 !important;
+      /* position:relative / z-index 강제 금지 — absolute/fixed 로 떠 있는 버튼을
+         원래 흐름 위치로 이동시켜 테두리가 어긋나 보이던 문제. 글로우는 outline+box-shadow 만으로 충분. */
       border-radius:6px !important;
       outline: 3px solid #00d4ff !important;
       outline-offset: 3px !important;
@@ -756,16 +793,21 @@ function waitForDomChange() {
 }
 
 function finishGoal() {
+  arrived = true;                 // 도착 완료 가드 잠금 → 이후 재계획·위젯 재생성 차단
   guide.active = false;
+  planToken++;                    // 진행 중이던 AI 응답 콜백 무효화 (도착 후 말풍선 갑툭튀 방지)
+  // 진행 중 클릭/입력 리스너 정리 (늦게 도착한 동작이 새 말풍선을 그리지 못하게)
+  if (guide.clickHandler) {
+    document.removeEventListener('click', guide.clickHandler, true);
+    guide.clickHandler = null; guide.clickTarget = null;
+  }
+  if (guide.cleanup) { try { guide.cleanup(); } catch {} guide.cleanup = null; }
   resetActionGuard();
   clearHighlight();
   // 목표 달성 → 더 이상 새 페이지에서 자동 재계획하지 않도록 목표 제거
   chrome.storage.local.remove(GOAL_KEY);
 
-  // 위젯 유지: 목적지 도착 후에도 다음 질문 가능하도록
-  ensureWidget();
-
-  // 가운데 큰 도착 배너 (어르신 가독성)
+  // 가운데 큰 도착 배너 (어르신 가독성) → 배너가 끝나면 프로그램 완전 종료
   showArrivalBanner();
 }
 
@@ -776,10 +818,17 @@ function showArrivalBanner() {
   banner.id = 'nui-arrival';
   banner.innerHTML = `<span class="ar-check">✓</span><span>도착했습니다!</span>`;
   document.body.appendChild(banner);
-  setTimeout(() => {
+  // 이전 타이머가 남아 위젯을 먼저 지우지 않도록, 현재 배너에 맞춰 하나만 건다.
+  clearTimeout(arrivalTimer);
+  arrivalTimer = setTimeout(() => {
+    // 배너 종료 → 프로그램 완전 종료: 배너·위젯·로드맵·강조 모두 같은 순간에 제거.
     banner.remove();
     document.getElementById('nui-roadmap')?.remove();
+    document.getElementById('nui-widget')?.remove();
+    clearHighlight();
     chrome.storage.local.remove(GOAL_KEY);
+    // 자동 복원 안 되도록 위젯을 "닫힘"으로 표시 (다시 쓰려면 확장 아이콘 클릭)
+    chrome.storage.local.set({ [WIDGET_OPEN_KEY]: false });
   }, 5000);
 }
 
@@ -874,6 +923,7 @@ function showCountdown(ms) {
 // 사용자가 프롬프트를 입력 → 최종 목표로 저장하고 현재 페이지부터 계획 시작.
 // 목표는 storage에 남아 페이지가 전환돼도 새 페이지에서 자동으로 이어진다.
 async function startGuide(prompt) {
+  arrived = false;   // 새 질문 → 도착 가드 해제
   stopGuide();
   resetActionGuard();
   chrome.storage.local.set({ [GOAL_KEY]: { goal: prompt, ts: Date.now() } });
@@ -892,6 +942,7 @@ function describeStep(s) {
 
 function planAndRun(goal) {
   if (!goal) return;
+  if (arrived) return;   // 도착 완료 → 늦은 재계획 차단 (말풍선 갑툭튀 방지)
   // 이전 단계에서 붙은 리스너 정리 (목표/위젯은 유지) — 재계획 시 리스너 누수 방지
   if (guide.clickHandler) {
     document.removeEventListener('click', guide.clickHandler, true);
@@ -922,7 +973,7 @@ function planAndRun(goal) {
         setWidgetState('idle');
         if (!res || res.error) {
           showError(res?.error || '분석 실패');
-          ensureWidget();
+          if (!arrived) ensureWidget();
           return;
         }
         const seq = Array.isArray(res.clickSequence) ? res.clickSequence : [];
@@ -932,7 +983,7 @@ function planAndRun(goal) {
           console.log('[NUI] 불명확 → 중단하고 추가 정보 요청');
           stopGoal();
           showNotice(res.message || '어디로 안내할지 명확하지 않아요.\n조금만 더 자세히 말씀해 주세요.', 4000);
-          ensureWidget();
+          if (!arrived) ensureWidget();
           return;
         }
 
@@ -980,7 +1031,7 @@ function replanSamePage() {
   chrome.storage.local.get(GOAL_KEY, (d) => {
     const g = d?.[GOAL_KEY]?.goal;
     if (g) planAndRun(g);
-    else ensureWidget();
+    else if (!arrived) ensureWidget();   // 도착 후엔 위젯 재생성 금지
   });
 }
 
@@ -1137,6 +1188,7 @@ function injectFloatingWidget() {
   }
   // ★ 아이콘으로 "새로 열 때"마다 이전 대화(목표·메모리·입력 초안)를 초기화한다.
   //   (페이지 이동 중 자동 복원은 ensureWidget을 쓰므로 여기서만 초기화 → 같은 작업은 안 끊김)
+  arrived = false;                                         // 새로 열기 → 도착 가드 해제
   stopGoal();                                              // 진행 중 목표/시각요소 정리
   resetActionGuard();
   chrome.storage.local.remove([GOAL_KEY, WIDGET_DRAFT_KEY]); // 이전 목표/메모리/초안 제거 (위치는 유지)
